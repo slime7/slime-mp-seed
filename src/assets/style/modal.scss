@@ -1,0 +1,41 @@
+.modal-frame {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+
+  .overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .4);
+  }
+
+  .dialog {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 36px;
+    width: calc(100vw - 70px);
+    border-radius: 12px;
+    background-color: #fff;
+  }
+
+  .close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 16px;
+    height: 16px;
+
+    .close-image {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}

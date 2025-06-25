@@ -1,0 +1,26 @@
+{
+  "appid": "",
+  "description": "",
+  "mp-weixin": {
+    "appid": "",
+    "setting": {
+      "urlCheck": false
+    },
+    "usingComponents": false,
+    "darkmode": false,
+    "resizable": true,
+    "frameset": true,
+    "scopedSlotsCompiler": "augmented",
+    "mergeVirtualHostAttributes": true,
+    "workers": "static/workers",
+    "enablePassiveEvent": true
+  },
+  "name": "",
+  "transformPx": false,
+  "uniStatistics": {
+    "enable": false
+  },
+  "versionCode": "100",
+  "versionName": "1.0.0",
+  "vueVersion": "3"
+}
