@@ -1,162 +1,170 @@
-import { onUnmounted, ref } from 'vue';
+import { onUnmounted } from 'vue';
 
-// Worker 管理器单例
 const workerManager = (() => {
   let workerInstance = null;
-  const pendingRequests = new Map();
-  let idleTimer = null;
+  // Map<invocationId, { promiseControl: { resolve, reject }, listeners: Map<eventName, Set<callback>> }>
+  const activeInvocations = new Map();
 
-  // Worker 配置
   const config = {
     workerPath: 'static/workers/main.js',
-    idleTimeout: 120000, // 30秒空闲后关闭
-    maxConcurrent: 5, // 最大并发请求数
-    requestTimeout: 10000, // 单个请求超时时间
+    idleTimeout: 120000,
   };
 
-  // 重置空闲计时器
   const resetIdleTimer = () => {
-    clearTimeout(idleTimer);
-    idleTimer = setTimeout(() => {
-      if (workerInstance && pendingRequests.size === 0) {
-        console.log('Closing idle worker');
+    clearTimeout(workerManager.idleTimer);
+    workerManager.idleTimer = setTimeout(() => {
+      if (workerInstance && activeInvocations.size === 0) {
+        console.log('Closing idle worker.');
         workerInstance.terminate();
         workerInstance = null;
       }
     }, config.idleTimeout);
   };
 
-  // 创建新 Worker
   const createNewWorker = () => {
-    const worker = uni.createWorker(config.workerPath, {
-      useExperimentalWorker: true,
-    });
+    const worker = uni.createWorker(config.workerPath, { useExperimentalWorker: true });
 
-    // 监听 Worker 被系统杀死事件
     worker.onProcessKilled(() => {
       console.warn('Worker was killed by system');
-
-      // 拒绝所有未完成的请求
-      // eslint-disable-next-line no-restricted-syntax
-      for (const [id, { reject }] of pendingRequests) {
-        reject(new Error('Worker was killed by system'));
-        pendingRequests.delete(id);
-      }
-
-      // 重新创建 Worker
-      workerInstance = createNewWorker();
+      activeInvocations.forEach(({ promiseControl }, id) => {
+        promiseControl.reject(new Error('Worker was killed by system'));
+      });
+      activeInvocations.clear();
+      workerInstance = createNewWorker(); // Recreate
     });
 
-    // 监听 Worker 消息
     worker.onMessage((res) => {
-      const { id, result, error } = res;
-      const request = pendingRequests.get(id);
+      const {
+        invocationId, event, data, error, isFinal,
+      } = res;
+      const invocation = activeInvocations.get(invocationId);
+      if (!invocation) return;
 
-      if (request) {
-        clearTimeout(request.timeoutId);
+      // 处理错误
+      if (error) {
+        invocation.promiseControl.reject(new Error(error));
+        activeInvocations.delete(invocationId);
+        if (activeInvocations.size === 0) resetIdleTimer();
+        return;
+      }
 
-        if (error) {
-          request.reject(new Error(error));
-        } else {
-          request.resolve(result);
-        }
+      // 处理持续的事件消息
+      if (event && invocation.listeners.has(event)) {
+        invocation.listeners.get(event).forEach((cb) => cb(data));
+      }
 
-        pendingRequests.delete(id);
-
-        // 如果没有待处理请求，设置空闲计时器
-        if (pendingRequests.size === 0) {
-          resetIdleTimer();
-        }
+      // 如果是最终消息，则 resolve promise 并清理
+      if (isFinal) {
+        invocation.promiseControl.resolve(data);
+        activeInvocations.delete(invocationId);
+        if (activeInvocations.size === 0) resetIdleTimer();
       }
     });
 
     return worker;
   };
 
-  // 调用 Worker 方法
-  const callWorker = (method, ...args) => new Promise((resolve, reject) => {
-    // 确保 Worker 存在
+  const ensureWorker = () => {
     if (!workerInstance) {
       workerInstance = createNewWorker();
     }
+    clearTimeout(workerManager.idleTimer);
+  };
 
-    // 生成唯一请求 ID
-    const requestId = `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+  /**
+   * @typedef {object} WorkerTaskHandle
+   * @property {function(onFulfilled?: Function, onRejected?: Function): Promise<any>} then - Promise 的 then 方法。
+   * @property {function(onRejected?: Function): Promise<any>} catch - Promise 的 catch 方法。
+   * @property {function(onFinally?: Function): Promise<any>} finally - Promise 的 finally 方法。
+   * @property {function(eventName: string, callback: Function): Function} on - 监听 worker 任务的进度事件，返回一个取消监听的函数。
+   * @property {function(reason?: string): void} cancel - 取消正在进行的 worker 任务。
+   */
 
-    // 设置请求超时
-    const timeoutId = setTimeout(() => {
-      pendingRequests.delete(requestId);
-      reject(new Error(`Worker request timeout: ${method}`));
-    }, config.requestTimeout);
+  /**
+   * 调用 worker 中的方法。
+   * @param {string} method - 要调用的 worker 方法名称。
+   * @param {...any} args - 传递给 worker 方法的参数。
+   * @returns {WorkerTaskHandle} 一个包含 Promise 和事件监听/取消方法的对象。
+   */
+  const callWorker = (method, ...args) => {
+    ensureWorker();
+    const invocationId = `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 
-    // 存储请求
-    pendingRequests.set(requestId, { resolve, reject, timeoutId });
-
-    // 发送消息给 Worker
-    workerInstance.postMessage({
-      id: requestId,
-      method,
-      args,
+    let promiseControl = {};
+    const promise = new Promise((resolve, reject) => {
+      promiseControl = { resolve, reject };
     });
 
-    // 重置空闲计时器
-    clearTimeout(idleTimer);
-  });
+    const invocation = {
+      promiseControl,
+      listeners: new Map(),
+    };
+    activeInvocations.set(invocationId, invocation);
 
-  // 终止 Worker
-  const terminateWorker = () => {
-    if (workerInstance) {
-      workerInstance.terminate();
-      workerInstance = null;
+    workerInstance.postMessage({ invocationId, method, args });
 
-      // 拒绝所有未完成的请求
-      // eslint-disable-next-line no-restricted-syntax
-      for (const [id, { reject }] of pendingRequests) {
-        reject(new Error('Worker terminated by user'));
-      }
-      pendingRequests.clear();
-    }
+    return {
+      then: promise.then.bind(promise),
+      catch: promise.catch.bind(promise),
+      finally: promise.finally.bind(promise),
+
+      on(eventName, callback) {
+        if (!invocation.listeners.has(eventName)) {
+          invocation.listeners.set(eventName, new Set());
+        }
+        invocation.listeners.get(eventName).add(callback);
+        // 返回一个取消函数
+        return () => {
+          invocation.listeners.get(eventName)?.delete(callback);
+        };
+      },
+
+      cancel(reason = 'Task cancelled by user.') {
+        if (activeInvocations.has(invocationId)) {
+          workerInstance.postMessage({ invocationId, method: 'system:cancel' });
+          invocation.promiseControl.reject(new Error(reason));
+          activeInvocations.delete(invocationId);
+          if (activeInvocations.size === 0) resetIdleTimer();
+        }
+      },
+    };
   };
 
-  return {
-    callWorker,
-    terminateWorker,
-  };
+  return { callWorker };
 })();
 
 export default function useWorker() {
-  const isLoading = ref(false);
-  const error = ref(null);
+  const activeTasks = new Set();
 
-  // 组件卸载时终止 Worker
   onUnmounted(() => {
-    workerManager.terminateWorker();
+    activeTasks.forEach((task) => task.cancel('Component unmounted.'));
+    activeTasks.clear();
   });
 
-  // 创建 Proxy 封装
   const workerProxy = new Proxy({}, {
+    /**
+     * 获取 worker 方法的代理。
+     * @template T
+     * @param {object} target - Proxy 目标对象。
+     * @param {string} prop - 属性名称（即 worker 方法名称）。
+     * @returns {(...args: any[]) => WorkerTaskHandle} 一个调用 worker 方法并返回 WorkerTaskHandle 的函数。
+     */
     get(target, prop) {
       return (...args) => {
-        isLoading.value = true;
-        error.value = null;
-
-        return workerManager.callWorker(prop, ...args)
-          .then((result) => {
-            isLoading.value = false;
-            return result;
-          })
-          .catch((err) => {
-            isLoading.value = false;
-            error.value = err;
-            throw err;
-          });
+        // [关键] 调用改造后的 callWorker
+        const task = workerManager.callWorker(prop, ...args);
+        // 追踪由该组件实例创建的任务
+        activeTasks.add(task);
+        // 当任务完成或失败时，从追踪集合中移除
+        task.finally(() => {
+          activeTasks.delete(task);
+        });
+        return task;
       };
     },
   });
 
   return {
     worker: workerProxy,
-    isLoading,
-    error,
   };
 }

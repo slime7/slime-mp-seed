@@ -2,7 +2,7 @@
   <mp-page
     title=""
   >
-    <div class="mp-body flex flex-col">
+    <div class="mp-body flex flex-col flex-auto">
       <!-- content -->
     </div>
   </mp-page>
@@ -11,13 +11,11 @@
 <script setup>
 import { onReady } from '@dcloudio/uni-app';
 import MpPage from '@/components/MpPage.vue';
-import { globalShareMenu } from '@/utils';
 
 const init = () => {
-  globalShareMenu();
 };
 onReady(() => {
-  init();
+  setTimeout(init, 0);
 });
 </script>
 

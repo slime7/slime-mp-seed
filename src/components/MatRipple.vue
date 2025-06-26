@@ -167,19 +167,6 @@ onMounted(() => {
 </template>
 
 <style lang="scss">
-:host {
-  position: absolute;
-  left: 0;
-  top: 0;
-  border-radius: inherit;
-  inset: 0;
-  overflow: hidden;
-  display: flex;
-  margin: auto;
-  width: 100%;
-  height: 100%;
-}
-
 .mat-ripple {
   position: absolute;
   left: 0;

@@ -173,6 +173,7 @@ export default {
   margin: 0;
   padding: 0 16px;
   min-width: 64px;
+  width: auto;
   height: var(--mat-btn-height, 36px);
   border-radius: 4px;
   font-size: .875rem;
@@ -214,7 +215,8 @@ export default {
     border-radius: 999px;
   }
 
-  &.mat-button--text, &.mat-button--outlined {
+  &.mat-button--text,
+  &.mat-button--outlined {
     color: currentColor;
     background-color: transparent;
     box-shadow: none;
@@ -244,7 +246,8 @@ export default {
     color: rgba(255, 255, 255, .84);
     background-color: #0268ff;
 
-    &.mat-button--text, &.mat-button--outlined {
+    &.mat-button--text,
+    &.mat-button--outlined {
       color: #0268ff;
       background-color: transparent;
     }
@@ -258,7 +261,8 @@ export default {
     color: rgba(255, 255, 255, .84);
     background-color: #4caf50;
 
-    &.mat-button--text, &.mat-button--outlined {
+    &.mat-button--text,
+    &.mat-button--outlined {
       color: #4caf50;
       background-color: transparent;
     }
@@ -272,7 +276,8 @@ export default {
     color: rgba(255, 255, 255, .84);
     background-color: #ff5252;
 
-    &.mat-button--text, &.mat-button--outlined {
+    &.mat-button--text,
+    &.mat-button--outlined {
       color: #ff5252;
       background-color: transparent;
     }

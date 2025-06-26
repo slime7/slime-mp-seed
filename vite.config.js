@@ -1,10 +1,11 @@
-import fs from 'fs';
-// eslint-disable-next-line import/no-extraneous-dependencies
+/* eslint-disable import/no-extraneous-dependencies */
+import fs from 'fs-extra';
+import path from 'path';
 import { defineConfig } from 'vite';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import uni from '@dcloudio/vite-plugin-uni';
-import tailwindcss from '@tailwindcss/postcss';
 import { UnifiedViteWeappTailwindcssPlugin } from 'weapp-tailwindcss/vite';
+import tailwindcss from 'tailwindcss';
+/* eslint-enable import/no-extraneous-dependencies */
 import pagesDetail from './src/pages';
 
 function parsePagesJson() {
@@ -13,22 +14,25 @@ function parsePagesJson() {
   });
 }
 parsePagesJson();
+const copySubMain = () => ({
+  enforce: 'post',
+  async writeBundle() {
+    await fs.copy(
+      path.resolve(__dirname, 'src/sub/index.js'),
+      path.join(
+        __dirname,
+        'dist/build/mp-weixin/sub/index.js',
+      ),
+    );
+  },
+});
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     uni(),
-    UnifiedViteWeappTailwindcssPlugin({
-      tailwindcss: {
-        // 显示声明用的是 tailwindcss v4
-        version: 4,
-        v4: {
-          cssEntries: [
-            'src/assets/style/tailwind.css',
-          ],
-        },
-      },
-    }),
+    UnifiedViteWeappTailwindcssPlugin({}),
+    copySubMain(),
   ],
   resolve: {
     alias: {

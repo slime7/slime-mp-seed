@@ -79,9 +79,11 @@ image {
 
 .pure-btn {
   all: unset;
+  width: auto;
 
   &::after {
     all: unset;
+    width: auto;
   }
 }
 

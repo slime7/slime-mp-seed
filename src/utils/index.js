@@ -153,7 +153,7 @@ export const classMerge = (...classes) => {
 export const jump = async (route, type) => {
   const page = typeof route === 'string' ? route : route.page;
   const params = typeof route === 'string' ? null : route.params;
-  let url = `/pages/${page}`;
+  let url = page;
   if (params) {
     url += `?${Object.keys(params).map((paramName) => `${paramName}=${params[paramName]}`).join('&')}`;
   }

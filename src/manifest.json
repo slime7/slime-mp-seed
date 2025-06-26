@@ -13,7 +13,9 @@
     "scopedSlotsCompiler": "augmented",
     "mergeVirtualHostAttributes": true,
     "workers": "static/workers",
-    "enablePassiveEvent": true
+    "enablePassiveEvent": true,
+    "lazyCodeLoading": "requiredComponents",
+    "style": "v2"
   },
   "name": "",
   "transformPx": false,

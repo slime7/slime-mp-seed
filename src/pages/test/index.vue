@@ -260,26 +260,10 @@ const onRefresherTrigger = (ev) => {
 const loadingProgress = ref(90);
 
 onLoad(() => {
-  const { execute: testHttp } = useHttp('https://httpbin.org/get', {
-    transformRequest: async ({ url, data, headers }) => {
-      console.log('发送前修改');
-      await wait(200);
-      return {
-        data: {
-          ...data,
-          transform: 'true',
-        },
-        headers: {
-          ...headers,
-          token: 'transformRequest',
-        },
-      };
-    },
-  }).get();
-  testHttp();
-  setTimeout(() => {
+  setTimeout(async () => {
     console.log('发送到work');
-    worker.test({ foo: 'bar' }, 'ping');
+    const result = await worker.test({ foo: 'bar' }, 'ping');
+    console.log('worker result', result);
   }, 2000);
 });
 </script>

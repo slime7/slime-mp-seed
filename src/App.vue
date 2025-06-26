@@ -25,8 +25,10 @@ onLaunch(() => {
 });
 </script>
 
-<style src="./assets/style/tailwind.css" lang="css"></style>
 <style lang="scss">
+@import 'tailwindcss/base';
+@import 'tailwindcss/utilities';
+@import 'tailwindcss/components';
 @import './assets/style/app';
 @import './assets/style/font-material-symbol.css';
 @import './assets/style/font-robot-mono.css';

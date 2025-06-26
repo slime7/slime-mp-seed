@@ -24,7 +24,8 @@
     "build:mp-weixin": "uni build -p mp-weixin",
     "lint": "eslint --fix --ext .js,.jsx,.vue src/",
     "lint:nofix": "eslint --ext .js,.jsx,.vue src/",
-    "upgrade-uni-app": "npx @dcloudio/uvm@latest vue3"
+    "upgrade-uni-app": "npx @dcloudio/uvm@latest vue3",
+    "postinstall": "weapp-tw patch"
   },
   "dependencies": {
     "@dcloudio/uni-app": "3.0.0-alpha-4070220250618001",
@@ -43,13 +44,11 @@
     "@dcloudio/uni-mp-weixin": "3.0.0-alpha-4070220250618001",
     "@dcloudio/uni-mp-xhs": "3.0.0-alpha-4070220250618001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-alpha-4070220250618001",
-    "@tailwindcss/postcss": "^4.1.10",
     "dayjs": "^1.11.13",
-    "eslint-config-airbnb-base": "^15.0.0",
     "pinia": "^3.0.2",
+    "tailwindcss": "^3.4.17",
     "vue": "^3.5.17",
-    "vue-i18n": "^9.14.4",
-    "weapp-tailwindcss": "^4.1.10"
+    "vue-i18n": "^9.14.4"
   },
   "devDependencies": {
     "@dcloudio/types": "^3.4.8",
@@ -57,14 +56,17 @@
     "@dcloudio/uni-cli-shared": "3.0.0-alpha-4070220250618001",
     "@dcloudio/uni-stacktracey": "3.0.0-alpha-4070220250618001",
     "@dcloudio/vite-plugin-uni": "3.0.0-alpha-4070220250618001",
-    "@vue/eslint-config-airbnb": "^7.0.0",
+    "@vue/eslint-config-airbnb": "^8.0.0",
     "@vue/runtime-core": "^3.5.17",
     "@vue/runtime-dom": "^3.5.17",
+    "autoprefixer": "^10.4.21",
     "cross-env": "^7.0.3",
     "eslint": "~9.24.0",
+    "eslint-config-airbnb-base": "^15.0.0",
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-import": "^2.28.0",
     "eslint-plugin-vue": "^9.16.1",
+    "fs-extra": "^11.3.0",
     "postcss": "^8.5.5",
     "postcss-html": "^1.8.0",
     "postcss-scss": "^4.0.9",
@@ -73,6 +75,7 @@
     "stylelint": "^15.11.0",
     "stylelint-config-html": "^1.1.0",
     "stylelint-scss": "^6.12.1",
-    "vite": "^5.2.8"
+    "vite": "^5.2.8",
+    "weapp-tailwindcss": "^4.1.10"
   }
 }

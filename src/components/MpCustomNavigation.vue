@@ -36,15 +36,16 @@ const hasChildrenContent = computed(() => useSlots().default);
 
 const pages = getCurrentPages();
 const currentPage = pages[pages.length - 1];
-const tabPages = ['pages/index', 'pages/goods', 'pages/order', 'pages/profile'];
+const tabPages = ['pages/home', 'pages/goods', 'pages/order', 'pages/profile'];
 
 // 返回按钮逻辑
-const backBtnVisible = !tabPages.includes(currentPage.route);
+const tabMode = false;
+const backBtnVisible = tabMode ? !tabPages.includes(currentPage.route) : currentPage.route !== 'pages/home';
 const handlePageBack = () => {
   if (pages.length > 1) {
     pageBack(1);
   } else {
-    jump('index', 'tab');
+    jump('home', tabMode ? 'tab' : 'replace');
   }
 };
 
@@ -86,7 +87,11 @@ export default {
         class="left-btn"
         :style="{ height: `${titleBarHeight}px`, width: `${titleBarHeight}px` }"
       >
-        <button class="title-back-btn" :style="`color: ${textColor}`" @click="handlePageBack">
+        <button
+          class="title-back-btn"
+          :style="`color: ${textColor}`"
+          @click="handlePageBack"
+        >
           <text v-if="!isIos" class="material-icons">
             {{ pages.length > 1 ? 'arrow_back' : 'home' }}
           </text>

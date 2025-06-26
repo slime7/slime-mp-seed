@@ -1,15 +1,11 @@
 const pages = {
   pages: [
     {
-      path: 'pages/index',
+      path: 'pages/home',
       disableScroll: true,
     },
     {
       path: 'pages/qr-redirect',
-      disableScroll: true,
-    },
-    {
-      path: 'pages/landing',
       disableScroll: true,
     },
     {
@@ -20,14 +16,14 @@ const pages = {
   // 分包
   subPackages: [
     {
-      root: 'pages-sub',
+      root: 'sub',
       pages: [
         {
           path: 'pages/sub-page',
           disableScroll: true,
         },
       ],
-      /* entry: 'js/main.js', */
+      // entry: 'index.js',
     },
   ],
   globalStyle: {
@@ -40,7 +36,6 @@ const pages = {
     pageOrientation: 'auto',
     handleWebviewPreload: 'auto',
   },
-  style: 'v2',
 };
 
 if (process.env.NODE_ENV === 'development') {

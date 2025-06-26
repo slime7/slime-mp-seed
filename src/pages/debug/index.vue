@@ -2,7 +2,7 @@
   <mp-page
     title="debug"
   >
-    <div class="mp-body flex flex-col">
+    <div class="mp-body flex flex-col p-4">
       <div>
         <div class="mt-4">
           设置
@@ -66,7 +66,7 @@ import {
   storage,
   toast,
 } from '@/utils';
-import { apiUrl, ossUrl } from '@/utils/apiEnvConstance';
+import { apiUrl, ossUrl } from '@/utils/api-env-constance';
 import useGlobalStore from '@/store/global';
 import pkgConfig from '@/../package.json';
 
