@@ -100,7 +100,7 @@ const onScrolltolower = (ev) => {
       </div>
 
       <div
-        class="refresher text-body2 py-2 flex justify-center"
+        class="refresher text-sm py-2 flex justify-center"
         :style="{
           transform: `translate3d(0, ${Math.max(internalRefresherEnabled ? pulledY : 0, refresherThreshold) * -1}px, 0)`,
         }"

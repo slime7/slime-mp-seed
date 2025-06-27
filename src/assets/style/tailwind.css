@@ -1,2 +1,2 @@
-/*@import 'weapp-tailwindcss/css';*/
-/*@source not 'dist';*/
+@import 'weapp-tailwindcss/css';
+@source not 'dist';

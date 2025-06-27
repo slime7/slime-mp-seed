@@ -156,17 +156,15 @@ onReady(() => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
+@reference '../assets/style/app.css';
+
 .mp-page {
   .mp-content {
     flex-grow: 1;
     overflow-y: auto;
     color: rgba(0, 0, 0, .87);
-    background-color: var(--mp-background-color, #f1f1f1);
-
-    &.rounded {
-      border-radius: 16px 16px 0 0;
-    }
+    background-color: var(--mp-background-color, --color-background);
   }
 
   .floating-frame {
@@ -198,44 +196,6 @@ onReady(() => {
         color: #eee;
         box-shadow: rgba(0, 0, 0, .2) 0 5px 5px -3px;
         word-break: break-all;
-      }
-    }
-  }
-
-  .policy-frame {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    font-size: 16px;
-    z-index: 2000;
-
-    .policy-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, .6);
-    }
-
-    .policy-box {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 85%;
-      border-radius: 16px;
-      background-color: #fff;
-      transform: translate(-50%, -50%);
-
-      .policy-title {
-        font-weight: bold;
-      }
-
-      .policy-link {
-        font-size: 14px;
-        color: #1a83ff;
       }
     }
   }

@@ -4,7 +4,7 @@ import path from 'path';
 import { defineConfig } from 'vite';
 import uni from '@dcloudio/vite-plugin-uni';
 import { UnifiedViteWeappTailwindcssPlugin } from 'weapp-tailwindcss/vite';
-import tailwindcss from 'tailwindcss';
+import tailwindcss from '@tailwindcss/postcss';
 /* eslint-enable import/no-extraneous-dependencies */
 import pagesDetail from './src/pages';
 
@@ -31,7 +31,17 @@ const copySubMain = () => ({
 export default defineConfig({
   plugins: [
     uni(),
-    UnifiedViteWeappTailwindcssPlugin({}),
+    UnifiedViteWeappTailwindcssPlugin({
+      tailwindcss: {
+        // 显示声明用的是 tailwindcss v4
+        version: 4,
+        v4: {
+          cssEntries: [
+            'src/assets/style/tailwind.css',
+          ],
+        },
+      },
+    }),
     copySubMain(),
   ],
   resolve: {

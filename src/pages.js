@@ -5,6 +5,10 @@ const pages = {
       disableScroll: true,
     },
     {
+      path: 'pages/component-show-case',
+      disableScroll: true,
+    },
+    {
       path: 'pages/qr-redirect',
       disableScroll: true,
     },

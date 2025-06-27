@@ -1,7 +1,5 @@
 <script setup>
-import { watchEffect } from 'vue';
-import { classMerge } from '@/utils';
-import MatRipple from '@/components/MatRipple.vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
   className: {
@@ -10,29 +8,34 @@ const props = defineProps({
   },
   color: {
     type: String,
-    default: '',
+    default: 'primary',
   },
   textColor: {
     type: String,
     default: '',
   },
-  text: {
-    type: Boolean,
-    default: false,
+  /**
+   * 按钮的变体样式，可选值为 'filled' | 'tonal' | 'secondary' | 'outlined' | 'text' | 'elevated'。
+   * @type {'filled' | 'tonal' | 'secondary' | 'outlined' | 'text' | 'elevated'}
+   * @default 'filled'
+   */
+  variant: {
+    type: String,
+    default: 'filled',
   },
   icon: {
     type: Boolean,
     default: false,
   },
-  outlined: {
-    type: Boolean,
-    default: false,
-  },
   rounded: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   block: {
+    type: Boolean,
+    default: false,
+  },
+  toggled: {
     type: Boolean,
     default: false,
   },
@@ -52,80 +55,57 @@ const props = defineProps({
 const emit = defineEmits(['click', 'getphonenumber']);
 
 const id = `${Math.random()}`.substring(2);
+const btnHeight = computed(() => ({ '--mat-btn-height': props.height }));
 const btnClass = ['mat-button', `mat-button-id-${id}`];
-const addClass = (c) => {
-  if (!btnClass.includes(c)) {
-    btnClass.push(c);
-  }
-};
-const removeClass = (c) => {
-  const index = btnClass.indexOf(c);
-  if (index > -1) {
-    btnClass.splice(index, 1);
-  }
-};
-const setProps = () => {
+const btnColorClass = computed(() => (props.color && [
+  'primary',
+  'secondary',
+  'tertiary',
+  'error',
+].indexOf(props.color) > -1 ? props.color : 'custom-color'));
+const btnColor = computed(() => (btnColorClass.value !== 'custom-color' ? {} : { '--mat-btn-color': props.color }));
+const btnTextColorClass = computed(() => {
+  let textColor = '';
   switch (props.textColor) {
   case 'black':
-    addClass('text--black');
+    textColor = 'text--black';
     break;
   case 'white':
-    addClass('text--white');
+    textColor = 'text--white';
     break;
   default:
-    removeClass('text--black');
-    removeClass('text--white');
     break;
   }
-  if (props.text) {
-    addClass('mat-button--text');
-  } else {
-    removeClass('mat-button--text');
-  }
-  if (props.outlined) {
-    addClass('mat-button--outlined');
-  } else {
-    removeClass('mat-button--outlined');
-  }
-  if (props.rounded) {
-    addClass('mat-button--rounded');
-  } else {
-    removeClass('mat-button--rounded');
-  }
-  if (props.block) {
-    addClass('mat-button--block');
-  } else {
-    removeClass('mat-button--block');
-  }
-  if (props.icon) {
-    addClass('mat-button--icon');
-  } else {
-    removeClass('mat-button--icon');
-  }
-  if (props.disabled) {
-    addClass('mat-button--disabled');
-  } else {
-    removeClass('mat-button--disabled');
-  }
-  if (props.color && [
-    'primary',
-    'success',
-    'warning',
-    'error',
-  ].indexOf(props.color) > -1) {
-    addClass(props.color);
-  } else {
-    removeClass('primary');
-    removeClass('success');
-    removeClass('warning');
-    removeClass('error');
-  }
-};
-setProps();
-
-watchEffect(() => {
-  setProps();
+  return textColor;
 });
+const btnVariantClass = computed(() => {
+  let variant = '';
+  switch (props.variant) {
+  case 'text':
+    variant = 'mat-button-variant-text';
+    break;
+  case 'outlined':
+    variant = 'mat-button-variant-outlined';
+    break;
+  case 'elevated':
+    variant = 'mat-button-variant-elevated';
+    break;
+  case 'tonal':
+  case 'secondary':
+    variant = 'mat-button-variant-tonal';
+    break;
+  case 'filled':
+  default:
+    variant = 'mat-button-variant-filled';
+    break;
+  }
+  return variant;
+});
+const btnRoundedClass = computed(() => (props.rounded ? 'mat-button--rounded' : ''));
+const btnBlockClass = computed(() => (props.block ? 'mat-button--block' : ''));
+const btnDisabledClass = computed(() => (props.disabled ? 'mat-button--disabled' : ''));
+const btnToggledClass = computed(() => (props.toggled ? 'toggled' : ''));
+const btnIconClass = computed(() => (props.icon ? 'mat-button--icon' : ''));
 
 const handleClick = (ev) => {
   if (props.disabled) {
@@ -137,35 +117,61 @@ const handleClick = (ev) => {
 const handleGetPhoneNumber = (ev) => {
   emit('getphonenumber', ev);
 };
-</script>
+const pressed = ref(false);
+let pressedTimer = null;
+const handlePressDown = async () => {
+  if (props.disabled) {
+    return;
+  }
 
-<script>
-export default {
-  options: {
-    virtualHost: true,
-  },
+  clearTimeout(pressedTimer);
+  pressed.value = true;
+};
+const handlePressUp = async () => {
+  pressedTimer = setTimeout(() => {
+    pressed.value = false;
+  }, 150);
 };
 </script>
 
 <template>
   <button
     :open-type="openType"
-    :class="classMerge(btnClass, className)"
+    :class="[
+      btnClass,
+      className,
+      btnColorClass,
+      btnTextColorClass,
+      btnVariantClass,
+      btnRoundedClass,
+      btnBlockClass,
+      btnDisabledClass,
+      btnToggledClass,
+      btnIconClass,
+      { toggled: pressed },
+    ]"
     :style="{
-      '--mat-btn-height': height,
+      ...btnHeight,
+      ...btnColor,
     }"
+    @touchstart="handlePressDown"
+    @touchend="handlePressUp"
     @click="handleClick"
     @getphonenumber="handleGetPhoneNumber"
   >
-    <mat-ripple :disabled="disabled" />
-    <div class="mat-button--content">
+    <div class="mat-button--content flex center">
       <slot />
     </div>
   </button>
 </template>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
+@reference '../assets/style/app.css';
+
 .mat-button {
+  --mat-btn-height: 36px;
+  --mat-btn-color: var(--color-surface);
+  --mat-btn-text-color: var(--color-on-surface);
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -175,31 +181,77 @@ export default {
   min-width: 64px;
   width: auto;
   height: var(--mat-btn-height, 36px);
-  border-radius: 4px;
+  border-radius: 12px;
   font-size: .875rem;
-  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
-  color: rgba(0, 0, 0, .87);
-  background-color: #fff;
   zoom: 1;
   white-space: nowrap;
   text-decoration: none;
-  text-transform: uppercase;
   touch-action: manipulation;
   user-select: none;
-  transition: all .2s cubic-bezier(.4, 0, .2, 1);
-  will-change: box-shadow;
+  transition: border-radius .15s ease-in-out, color .15s ease-in-out, background-color .15s ease-in-out;
   overflow: hidden;
+
+  &.mat-button-variant-filled {
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+
+    &.toggled {
+      border-radius: 12px;
+      color: var(--color-on-primary);
+      background-color: var(--color-primary);
+    }
+  }
+
+  &.mat-button-variant-elevated {
+    color: var(--color-primary);
+    background-color: var(--color-surface-container-low);
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px rgba(0, 0, 0, .14), 0 1px 5px rgba(0, 0, 0, .12);
+
+    &.toggled {
+      border-radius: 12px;
+      color: var(--color-on-primary);
+      background-color: var(--color-primary);
+    }
+  }
+
+  &.mat-button-variant-tonal {
+    color: var(--color-on-secondary);
+    background-color: var(--color-secondary);
+
+    &.toggled {
+      border-radius: 12px;
+      color: var(--color-on-secondary);
+      background-color: var(--color-secondary);
+    }
+  }
+
+  &.mat-button-variant-outlined {
+    background-color: transparent;
+    color: var(--color-on-surface);
+    border: 1px solid var(--color-outline-variant);
+
+    &.toggled {
+      border-radius: 12px;
+      color: var(--color-inverse-on-surface);
+      background-color: var(--color-inverse-surface);
+    }
+  }
+
+  &.mat-button-variant-text {
+    background-color: transparent;
+    color: var(--color-on-surface);
+  }
 
   .mat-button--content {
     font-weight: 500;
   }
 
   &.text--white:not(.mat-button--text):not(.mat-button--outlined) {
-    color: rgba(255, 255, 255, .84);
+    color: var(--color-surface);
   }
 
   &.text--black:not(.mat-button--text):not(.mat-button--outlined) {
-    color: rgba(0, 0, 0, .87);
+    color: var(--color-on-surface);
   }
 
   &::after {
@@ -212,78 +264,32 @@ export default {
   }
 
   &.mat-button--rounded {
-    border-radius: 999px;
-  }
-
-  &.mat-button--text,
-  &.mat-button--outlined {
-    color: currentColor;
-    background-color: transparent;
-    box-shadow: none;
-  }
-
-  &.mat-button--outlined {
-    border: 1px solid currentColor;
-  }
-
-  &.mat-button--text {
-    padding-left: 8px;
-    padding-right: 8px;
+    border-radius: calc(infinity * 1px);
   }
 
   &.mat-button--icon {
     padding: 0;
     min-width: initial;
     width: 36px;
-    border-radius: 999px;
+    border-radius: calc(infinity * 1px);
   }
 
   &.mat-button--disabled {
-    opacity: .4;
+    opacity: .1;
   }
 
-  &.primary {
-    color: rgba(255, 255, 255, .84);
-    background-color: #0268ff;
+  &.custom-color {
+    color: var(--mat-btn-text-color);
+    background-color: var(--mat-btn-color);
 
     &.mat-button--text,
     &.mat-button--outlined {
-      color: #0268ff;
+      color: var(--mat-btn-color);
       background-color: transparent;
     }
 
     &.mat-button--outlined {
-      border: 1px solid #0268ff;
-    }
-  }
-
-  &.success {
-    color: rgba(255, 255, 255, .84);
-    background-color: #4caf50;
-
-    &.mat-button--text,
-    &.mat-button--outlined {
-      color: #4caf50;
-      background-color: transparent;
-    }
-
-    &.mat-button--outlined {
-      border: 1px solid #4caf50;
-    }
-  }
-
-  &.error {
-    color: rgba(255, 255, 255, .84);
-    background-color: #ff5252;
-
-    &.mat-button--text,
-    &.mat-button--outlined {
-      color: #ff5252;
-      background-color: transparent;
-    }
-
-    &.mat-button--outlined {
-      border: 1px solid #ff5252;
+      border: 1px solid var(--mat-btn-color);
     }
   }
 }
