@@ -528,4 +528,123 @@ const handlePressUp = async () => {
     }
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  .mat-button {
+    --mat-btn-color: var(--color-dark-surface);
+    --mat-btn-text-color: var(--color-dark-on-surface);
+
+    &.mat-button-variant-filled {
+      color: var(--color-dark-on-primary);
+      background-color: var(--color-dark-primary);
+
+      &.mat-button--disabled {
+        color: --alpha(var(--color-dark-on-surface) / .38);
+        background-color: --alpha(var(--color-dark-on-surface) / .1);
+      }
+
+      &.mat-button--togglable {
+        color: var(--color-dark-on-surface);
+        background-color: var(--color-dark-surface-container);
+
+        &.toggled {
+          color: var(--color-dark-on-primary);
+          background-color: var(--color-dark-primary);
+        }
+
+        &.mat-button--disabled {
+          color: --alpha(var(--color-dark-on-surface) / .38);
+          background-color: --alpha(var(--color-dark-on-surface) / .1);
+        }
+      }
+    }
+
+    &.mat-button-variant-elevated {
+      color: var(--color-dark-primary);
+      background-color: var(--color-dark-surface-container-low);
+
+      &.mat-button--disabled {
+        color: --alpha(var(--color-dark-on-surface) / .38);
+        background-color: --alpha(var(--color-dark-on-surface) / .1);
+      }
+
+      &.mat-button--togglable {
+        color: var(--color-dark-primary);
+        background-color: var(--color-dark-surface-container-low);
+
+        &.toggled {
+          color: var(--color-dark-on-primary);
+          background-color: var(--color-dark-primary);
+        }
+
+        &.mat-button--disabled {
+          color: --alpha(var(--color-dark-on-surface) / .38);
+          background-color: --alpha(var(--color-dark-on-surface) / .1);
+        }
+      }
+    }
+
+    &.mat-button-variant-tonal {
+      color: var(--color-dark-on-secondary-container);
+      background-color: var(--color-dark-secondary-container);
+
+      &.mat-button--disabled {
+        color: --alpha(var(--color-dark-on-surface) / .38);
+        background-color: --alpha(var(--color-dark-on-surface) / .1);
+      }
+
+      &.mat-button--togglable {
+        color: var(--color-dark-on-secondary-container);
+        background-color: var(--color-dark-secondary-container);
+
+        &.toggled {
+          color: var(--color-dark-on-secondary);
+          background-color: var(--color-dark-secondary);
+        }
+
+        &.mat-button--disabled {
+          color: --alpha(var(--color-dark-on-surface) / .38);
+          background-color: --alpha(var(--color-dark-on-surface) / .1);
+        }
+      }
+    }
+
+    &.mat-button-variant-outlined {
+      color: var(--color-dark-on-surface);
+      border-color: var(--color-dark-outline-variant);
+
+      &.mat-button--disabled {
+        color: --alpha(var(--color-dark-on-surface) / .38);
+        background-color: --alpha(var(--color-dark-on-surface) / .1);
+        border-color: var(--color-dark-outline-variant);
+      }
+
+      &.mat-button--togglable {
+        color: var(--color-dark-on-surface);
+        border-color: var(--color-dark-outline-variant);
+
+        &.toggled {
+          color: var(--color-dark-inverse-on-surface);
+          background-color: var(--color-dark-inverse-surface);
+          border-color: var(--color-dark-inverse-surface);
+        }
+
+        &.mat-button--disabled {
+          color: --alpha(var(--color-dark-on-surface) / .38);
+          background-color: --alpha(var(--color-dark-on-surface) / .1);
+          border-color: --alpha(var(--color-dark-on-surface) / .1);
+        }
+      }
+    }
+
+    &.mat-button-variant-text {
+      color: var(--color-dark-primary);
+    }
+
+    &.mat-button--disabled {
+      color: --alpha(var(--color-dark-on-surface) / .38);
+      background-color: --alpha(var(--color-dark-on-surface) / .1);
+    }
+  }
+}
 </style>

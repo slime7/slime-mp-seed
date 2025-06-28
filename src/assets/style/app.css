@@ -48,7 +48,6 @@
   --color-on-tertiary-fixed: #081d2c;
   --color-on-tertiary-fixed-variant: #354959;
   --color-surface-light: #e4e8ef;
-
   /* 暗色 */
   --color-dark-background: #1b2025;
   --color-dark-surface: #0f1418;
@@ -144,9 +143,24 @@ page {
   font-size: 1rem;
   line-height: 1.25em;
   background-color: var(--color-surface);
-  color: #222;
+  color: var(--color-on-surface);
   overflow-y: hidden;
   --mp-page-max-width: 430px;
+
+  .light {
+    color-scheme: light;
+  }
+
+  .dark {
+    color-scheme: dark;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  page {
+    background-color: var(--color-dark-surface);
+    color: var(--color-dark-on-surface);
+  }
 }
 
 image {

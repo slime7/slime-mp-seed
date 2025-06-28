@@ -45,20 +45,21 @@ const toastStore = useToastStore();
 const pageContainerVisible = ref(true);
 
 const deviceInfo = computed(() => store.deviceInfo);
-const titleBarShadow = ref(false);
+const theme = computed(() => store.deviceInfo.theme);
+const titleBarScrolled = ref(false);
 const toastVisible = computed(() => toastStore.visible);
 const toastMsg = computed(() => toastStore.msg);
 
 const scroll = (ev) => {
   emits('scroll', ev);
   const top = ev.detail.scrollTop;
-  titleBarShadow.value = top >= 5;
+  titleBarScrolled.value = top >= 5;
 };
 const scrolltolower = (ev) => {
   emits('scrolltolower', ev);
 };
 const onReachTop = (ev) => {
-  titleBarShadow.value = false;
+  titleBarScrolled.value = false;
   emits('scrolltoupper', ev);
 };
 
@@ -73,6 +74,10 @@ const afterBackBtn = () => {
 };
 
 onReady(() => {
+  uni.setNavigationBarColor({
+    frontColor: theme.value === 'dark' ? '#ffffff' : '#000000',
+    backgroundColor: theme.value === 'dark' ? '#000000' : '#ffffff',
+  });
 });
 </script>
 
@@ -84,7 +89,7 @@ onReady(() => {
       :status-bar-height="deviceInfo.statusBarHeight"
       :title-bar-height="deviceInfo.titleBarHeight"
       :is-ios="deviceInfo.isIos"
-      :shadow="titleBarShadow"
+      :scrolled="titleBarScrolled"
       :background-color="titleBarBackgroundColor"
     />
 
@@ -161,10 +166,18 @@ onReady(() => {
 
 .mp-page {
   .mp-content {
+    --mp-background-color: var(--color-surface);
     flex-grow: 1;
     overflow-y: auto;
-    color: rgba(0, 0, 0, .87);
-    background-color: var(--mp-background-color, --color-background);
+    color: var(--color-on-surface);
+    background-color: var(--mp-background-color);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .mp-content {
+      --mp-background-color: var(--color-dark-surface);
+      color: var(--color-dark-on-surface);
+    }
   }
 
   .floating-frame {

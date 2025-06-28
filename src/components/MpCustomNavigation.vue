@@ -8,7 +8,7 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  shadow: {
+  scrolled: {
     type: Boolean,
     default: false,
   },
@@ -25,10 +25,6 @@ const props = defineProps({
   visible: {
     type: Boolean,
     default: true,
-  },
-  backgroundColor: {
-    type: String,
-    default: '',
   },
 });
 
@@ -49,23 +45,8 @@ const handlePageBack = () => {
   }
 };
 
-const textColor = ref('');
 onReady(() => {
-  const preferTextColor = props.backgroundColor ? getContrastYIQ(props.backgroundColor) : 'black';
-  if (preferTextColor === 'white') {
-    textColor.value = 'rgba(255, 255, 255, .84)';
-  } else {
-    textColor.value = 'rgba(0, 0, 0, .87)';
-  }
 });
-</script>
-
-<script>
-export default {
-  options: {
-    virtualHost: true,
-  },
-};
 </script>
 
 <template>
@@ -73,11 +54,10 @@ export default {
     v-if="visible"
     class="custom-navigation"
     :class="{
-      shadow,
+      scrolled,
       ios: isIos,
       visible,
     }"
-    :style="{ '--mp-background-color': '#fff' }"
   >
     <div class="page-status-bar" :style="{ height: `${statusBarHeight}px` }" />
 
@@ -89,7 +69,6 @@ export default {
       >
         <button
           class="title-back-btn"
-          :style="`color: ${textColor}`"
           @click="handlePageBack"
         >
           <text v-if="!isIos" class="material-icons">
@@ -101,7 +80,7 @@ export default {
         </button>
       </div>
       <slot />
-      <div v-if="!hasChildrenContent" class="title" :style="`color: ${textColor}`">
+      <div v-if="!hasChildrenContent" class="title">
         {{ title }}
       </div>
     </div>
@@ -109,17 +88,22 @@ export default {
 </template>
 
 <style scoped lang="scss">
+@reference '../assets/style/app.css';
+
 .custom-navigation {
+  --mp-nav-bg-color: var(--color-surface);
+  --mp-nav-bg-color-scrolled: var(--color-surface-container);
+  --mp-nav-color: var(--color-on-surface);
   position: relative;
   width: 100%;
   flex-shrink: 0;
   flex-grow: 0;
-  background-color: var(--mp-background-color, #fff);
+  background-color: var(--mp-nav-bg-color);
   overflow: hidden;
   z-index: 1000;
 
-  &.shadow {
-    box-shadow: 0 3px 5px -1px rgba(0, 0, 0, .2), 0 6px 10px 0 rgba(0, 0, 0, .14), 0 1px 18px 0 rgba(0, 0, 0, .12);
+  &.scrolled {
+    --mp-nav-bg-color: var(--mp-nav-bg-color-scrolled);
   }
 
   .page-title {
@@ -129,8 +113,8 @@ export default {
     right: 0;
     padding: 0 16px;
     font-weight: 500;
-    color: rgba(0, 0, 0, .87);
-    background-color: var(--mp-background-color, #fff);
+    color: var(--mp-nav-color);
+    background-color: var(--mp-nav-bg-color);
     z-index: 1200;
 
     .title {
@@ -167,14 +151,20 @@ export default {
   }
 
   &.ios {
-    background-color: var(--mp-background-color, #fff);
-
     .page-title .title {
       position: absolute;
       left: 50%;
       padding-left: 0;
       transform: translateX(-50%);
     }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .custom-navigation {
+    --mp-nav-bg-color: var(--color-dark-surface);
+    --mp-nav-bg-color-scrolled: var(--color-dark-surface-container);
+    --mp-nav-color: var(--color-dark-on-surface);
   }
 }
 </style>

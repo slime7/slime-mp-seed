@@ -38,7 +38,6 @@
 
       <div class="mt-2 flex flex-wrap gap-2">
         <mat-button
-          color="primary"
           rounded
           @click="packagedRequest"
         >
@@ -54,7 +53,6 @@
         </mat-button>
 
         <mat-button
-          color="primary"
           rounded
           @click="autoGetTokenRequest"
         >
@@ -62,7 +60,6 @@
         </mat-button>
 
         <mat-button
-          color="primary"
           rounded
           :disabled="loading"
           @click="makeRequest"
@@ -71,7 +68,6 @@
         </mat-button>
 
         <mat-button
-          color="primary"
           rounded
           :disabled="!loading"
           @click="abort"

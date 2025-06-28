@@ -180,4 +180,6 @@ onReady(() => {
 });
 </script>
 
-<style scoped lang="css"></style>
+<style scoped lang="postcss">
+@reference '../assets/style/app.css';
+</style>

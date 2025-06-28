@@ -7,7 +7,7 @@
       "urlCheck": false
     },
     "usingComponents": false,
-    "darkmode": false,
+    "darkmode": true,
     "resizable": true,
     "frameset": true,
     "scopedSlotsCompiler": "augmented",

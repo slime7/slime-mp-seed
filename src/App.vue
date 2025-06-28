@@ -19,9 +19,19 @@ const getToken = async () => {
   }
 };
 
+const onThemeChangeHandler = () => {
+  uni.onThemeChange(({ theme }) => {
+    uni.setNavigationBarColor({
+      frontColor: theme === 'dark' ? '#ffffff' : '#000000',
+      backgroundColor: theme === 'dark' ? '#000000' : '#ffffff',
+    });
+  });
+};
+
 onLaunch(() => {
   globalStore.initDeviceInfo();
   getToken();
+  onThemeChangeHandler();
 });
 </script>
 
