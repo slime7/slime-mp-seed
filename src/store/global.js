@@ -54,10 +54,17 @@ const useGlobalStore = defineStore('globalStore', {
       this.pageShareData.order.refreshList = refresh;
     },
     async initDeviceInfo() {
+      let isH5 = false;
       const deviceInfo = uni.getDeviceInfo();
       const windowInfo = uni.getWindowInfo();
-      const systemSetting = uni.getSystemSetting();
       const appBaseInfo = uni.getAppBaseInfo();
+      let systemSetting;
+      try {
+        systemSetting = uni.getSystemSetting();
+      } catch (err) {
+        isH5 = true;
+        console.log('h5 端似乎沒有 getSystemSetting');
+      }
       console.log('deviceInfo', deviceInfo);
       console.log('windowInfo', windowInfo);
       console.log('systemSetting', systemSetting);
@@ -73,7 +80,7 @@ const useGlobalStore = defineStore('globalStore', {
         titleBarHeight = 48;
       }
       if (isIos) {
-        titleBarHeight = windowInfo.screenHeight < 400 && systemSetting.deviceOrientation === 'landscape' ? 32 : 40;
+        titleBarHeight = windowInfo.screenHeight < 400 && (systemSetting && systemSetting.deviceOrientation === 'landscape') ? 32 : 40;
       }
       const gestureBarHeight = windowInfo.safeAreaInsets.bottom;
 

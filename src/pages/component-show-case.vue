@@ -104,7 +104,7 @@
             size
           </div>
 
-          <div class="mt-2 flex flex-col gap-2">
+          <div class="mt-2 flex flex-col items-start gap-2">
             <mat-button
               size="xs"
               variant="outlined"

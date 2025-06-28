@@ -194,6 +194,9 @@ const handlePressUp = async () => {
     :style="{
       ...btnColor,
     }"
+    @mousedown="handlePressDown"
+    @mouseup="handlePressUp"
+    @mouseout="handlePressUp"
     @touchstart="handlePressDown"
     @touchend="handlePressUp"
     @click="handleClick"

@@ -146,6 +146,7 @@ page {
   color: var(--color-on-surface);
   overflow-y: hidden;
   --mp-page-max-width: 430px;
+  font-family: 'Roboto', 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif;
 
   .light {
     color-scheme: light;
