@@ -25,6 +25,7 @@ const onThemeChangeHandler = () => {
       frontColor: theme === 'dark' ? '#ffffff' : '#000000',
       backgroundColor: theme === 'dark' ? '#000000' : '#ffffff',
     });
+    globalStore.setDarkMode(theme);
   });
 };
 

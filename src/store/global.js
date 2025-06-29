@@ -17,6 +17,7 @@ const useGlobalStore = defineStore('globalStore', {
       gestureBarHeight: 0,
       isDesktop: false,
       isIos: false,
+      isH5: false,
       isAndroid: false,
       masterMode: false,
       theme: 'light',
@@ -44,14 +45,8 @@ const useGlobalStore = defineStore('globalStore', {
         ...payload,
       };
     },
-    setUserLocation(payload) {
-      this.userLocation = {
-        ...this.userLocation,
-        ...payload,
-      };
-    },
-    setOrderRefresh(refresh = false) {
-      this.pageShareData.order.refreshList = refresh;
+    setDarkMode(isDark) {
+      this.deviceInfo.theme = isDark ? 'dark' : 'light';
     },
     async initDeviceInfo() {
       let isH5 = false;
@@ -91,6 +86,7 @@ const useGlobalStore = defineStore('globalStore', {
         isDesktop,
         isAndroid,
         isIos,
+        isH5,
         theme: appBaseInfo.theme || 'light',
         windowWidth: windowInfo.windowWidth,
         screenHeight: windowInfo.screenHeight,

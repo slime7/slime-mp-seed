@@ -45,6 +45,7 @@
     "@dcloudio/uni-mp-weixin": "3.0.0-alpha-4070220250618001",
     "@dcloudio/uni-mp-xhs": "3.0.0-alpha-4070220250618001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-alpha-4070220250618001",
+    "@material/material-color-utilities": "^0.3.0",
     "dayjs": "^1.11.13",
     "pinia": "^3.0.2",
     "tailwindcss": "^4.1.10",

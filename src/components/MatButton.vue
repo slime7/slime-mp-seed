@@ -1,17 +1,12 @@
 <script setup>
 import { computed, ref } from 'vue';
+import { argbFromHex } from '@material/material-color-utilities';
+import { getThemeStyles, themeFromSourceColor } from '@/utils/theme-helper';
+import useGlobalStore from '@/store/global';
 
 const props = defineProps({
   className: {
     type: [String, Array, Object],
-    default: '',
-  },
-  color: {
-    type: String,
-    default: 'primary',
-  },
-  textColor: {
-    type: String,
     default: '',
   },
   /**
@@ -23,13 +18,17 @@ const props = defineProps({
     type: String,
     default: 'filled',
   },
+  filledAlt: {
+    type: Boolean,
+    default: false,
+  },
   icon: {
     type: Boolean,
     default: false,
   },
-  rounded: {
-    type: Boolean,
-    default: true,
+  sharpe: {
+    type: String,
+    default: 'rounded',
   },
   block: {
     type: Boolean,
@@ -68,51 +67,36 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  /** 主题色 */
+  color: {
+    type: String,
+    default: '',
+  },
 });
 const emit = defineEmits(['click', 'getphonenumber']);
 
+const store = useGlobalStore();
 const id = `${Math.random()}`.substring(2);
 const btnClass = ['mat-button', `mat-button-id-${id}`];
-const btnColorClass = computed(() => (props.color && [
-  'primary',
-  'secondary',
-  'tertiary',
-  'error',
-].indexOf(props.color) > -1 ? props.color : 'custom-color'));
-const btnColor = computed(() => (btnColorClass.value !== 'custom-color' ? {} : { '--mat-btn-color': props.color }));
-const btnTextColorClass = computed(() => {
-  let textColor = '';
-  switch (props.textColor) {
-  case 'black':
-    textColor = 'text--black';
-    break;
-  case 'white':
-    textColor = 'text--white';
-    break;
-  default:
-    break;
-  }
-  return textColor;
-});
 const btnVariantClass = computed(() => {
   let variant = '';
   switch (props.variant) {
   case 'text':
-    variant = 'mat-button-variant-text';
+    variant = 'mat-button--variant-text';
     break;
   case 'outlined':
-    variant = 'mat-button-variant-outlined';
+    variant = 'mat-button--variant-outlined';
     break;
   case 'elevated':
-    variant = 'mat-button-variant-elevated';
+    variant = 'mat-button--variant-elevated';
     break;
   case 'tonal':
   case 'secondary':
-    variant = 'mat-button-variant-tonal';
+    variant = 'mat-button--variant-tonal';
     break;
   case 'filled':
   default:
-    variant = 'mat-button-variant-filled';
+    variant = 'mat-button--variant-filled';
     break;
   }
   return variant;
@@ -139,12 +123,22 @@ const btnSizeClass = computed(() => {
   }
   return sizeClass;
 });
-const btnRoundedClass = computed(() => (props.rounded ? 'mat-button--rounded' : ''));
+const btnSharpeClass = computed(() => `mat-button--sharpe-${props.sharpe}`);
 const btnBlockClass = computed(() => (props.block ? 'mat-button--block' : ''));
 const btnDisabledClass = computed(() => (props.disabled ? 'mat-button--disabled' : ''));
 const btnTogglableClass = computed(() => (props.togglable ? 'mat-button--togglable' : ''));
 const btnToggledClass = computed(() => (props.toggled ? 'toggled' : ''));
 const btnIconClass = computed(() => (props.icon ? 'mat-button--icon' : ''));
+
+// 自定义颜色
+const themeStyles = computed(() => {
+  if (!props.color || !/^#[0-9a-f]{6}$/i.test(props.color)) {
+    return {};
+  }
+  const theme = themeFromSourceColor(argbFromHex(props.color), 'SchemeTonalSpot', 0.0, []);
+  const isDark = store.deviceInfo.theme === 'dark';
+  return getThemeStyles(theme, { dark: isDark });
+});
 
 const handleClick = (ev) => {
   if (props.disabled) {
@@ -169,7 +163,7 @@ const handlePressDown = async () => {
 const handlePressUp = async () => {
   pressedTimer = setTimeout(() => {
     pressed.value = false;
-  }, 200);
+  }, 0);
 };
 </script>
 
@@ -179,10 +173,8 @@ const handlePressUp = async () => {
     :class="[
       btnClass,
       className,
-      btnColorClass,
-      btnTextColorClass,
       btnVariantClass,
-      btnRoundedClass,
+      btnSharpeClass,
       btnBlockClass,
       btnDisabledClass,
       btnTogglableClass,
@@ -192,7 +184,7 @@ const handlePressUp = async () => {
       { pressed },
     ]"
     :style="{
-      ...btnColor,
+      ...themeStyles,
     }"
     @mousedown="handlePressDown"
     @mouseup="handlePressUp"
@@ -232,8 +224,6 @@ const handlePressUp = async () => {
 @reference '../assets/style/app.css';
 
 .mat-button {
-  --mat-btn-color: var(--color-surface);
-  --mat-btn-text-color: var(--color-on-surface);
   --mat-btn-height: --spacing(10);
   --mat-btn-padding: --spacing(4);
   --mat-btn-radius: calc(var(--mat-btn-height) / 2);
@@ -257,7 +247,7 @@ const handlePressUp = async () => {
   text-decoration: none;
   touch-action: manipulation;
   user-select: none;
-  transition: all .2s cubic-bezier(.2, 0, 0, 1);
+  transition: all .2s var(--ease-md-decelerate);
   overflow: hidden;
 
   .mat-button--state-layer {
@@ -272,11 +262,16 @@ const handlePressUp = async () => {
     width: 100%;
     height: 100%;
     background-color: transparent;
+    opacity: 0;
     pointer-events: none;
   }
 
-  &.mat-button--rounded {
+  &.mat-button--sharpe-rounded {
     border-radius: var(--mat-btn-radius);
+  }
+
+  &.mat-button--sharpe-square {
+    border-radius: var(--mat-btn-radius-square);
   }
 
   &.mat-button--size-xs {
@@ -317,54 +312,35 @@ const handlePressUp = async () => {
     font-size: 2rem;
   }
 
-  &.mat-button-variant-filled {
-    color: var(--color-on-primary);
-    background-color: var(--color-primary);
-
-    &.mat-button--disabled {
-      color: --alpha(var(--color-on-surface) / .38);
-      background-color: --alpha(var(--color-on-surface) / .1);
-    }
+  &.mat-button--variant-filled {
+    color: var(--md-color-on-primary);
+    background-color: var(--md-color-primary);
 
     &.mat-button--togglable {
-      color: var(--color-on-surface);
-      background-color: var(--color-surface-container);
+      color: var(--md-color-on-surface-variant);
+      background-color: var(--md-color-surface-container);
 
       &.toggled {
-        color: var(--color-on-primary);
-        background-color: var(--color-primary);
+        color: var(--md-color-on-primary);
+        background-color: var(--md-color-primary);
         border-radius: var(--mat-btn-radius-square);
       }
 
       &.pressed {
         border-radius: var(--mat-btn-radius-pressed);
-      }
-
-      &.mat-button--disabled {
-        color: --alpha(var(--color-on-surface) / .38);
-        background-color: --alpha(var(--color-on-surface) / .1);
       }
     }
   }
 
-  &.mat-button-variant-elevated {
-    color: var(--color-primary);
-    background-color: var(--color-surface-container-low);
+  &.mat-button--variant-elevated {
+    color: var(--md-color-primary);
+    background-color: var(--md-color-surface-container-low);
     box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px rgba(0, 0, 0, .14), 0 1px 5px rgba(0, 0, 0, .12);
 
-    &.mat-button--disabled {
-      color: --alpha(var(--color-on-surface) / .38);
-      background-color: --alpha(var(--color-on-surface) / .1);
-      box-shadow: none;
-    }
-
     &.mat-button--togglable {
-      color: var(--color-primary);
-      background-color: var(--color-surface-container-low);
-
       &.toggled {
-        color: var(--color-on-primary);
-        background-color: var(--color-primary);
+        color: var(--md-color-on-primary);
+        background-color: var(--md-color-primary);
         border-radius: var(--mat-btn-radius-square);
       }
 
@@ -373,80 +349,66 @@ const handlePressUp = async () => {
       }
 
       &.mat-button--disabled {
-        color: --alpha(var(--color-on-surface) / .38);
-        background-color: --alpha(var(--color-on-surface) / .1);
         box-shadow: none;
       }
     }
   }
 
-  &.mat-button-variant-tonal {
-    color: var(--color-on-secondary-container);
-    background-color: var(--color-secondary-container);
-
-    &.mat-button--disabled {
-      color: --alpha(var(--color-on-surface) / .38);
-      background-color: --alpha(var(--color-on-surface) / .1);
-    }
+  &.mat-button--variant-tonal {
+    color: var(--md-color-on-secondary-container);
+    background-color: var(--md-color-secondary-container);
 
     &.mat-button--togglable {
-      color: var(--color-on-secondary-container);
-      background-color: var(--color-secondary-container);
-
       &.toggled {
-        color: var(--color-on-secondary);
-        background-color: var(--color-secondary);
+        color: var(--md-color-on-secondary);
+        background-color: var(--md-color-secondary);
         border-radius: var(--mat-btn-radius-square);
       }
 
       &.pressed {
         border-radius: var(--mat-btn-radius-pressed);
       }
+    }
 
-      &.mat-button--disabled {
-        color: --alpha(var(--color-on-surface) / .38);
-        background-color: --alpha(var(--color-on-surface) / .1);
-      }
+    &.pressed {
+      color: var(--md-color-on-tertiary);
+      background-color: var(--md-color-tertiary);
     }
   }
 
-  &.mat-button-variant-outlined {
-    color: var(--color-on-surface);
+  &.mat-button--variant-outlined {
+    color: var(--md-color-on-surface-variant);
     background-color: transparent;
-    border: var(--mat-btn-border-size) solid var(--color-outline-variant);
+    border: var(--mat-btn-border-size) solid var(--md-color-outline-variant);
 
     &.mat-button--disabled {
-      color: --alpha(var(--color-on-surface) / .38);
-      background-color: --alpha(var(--color-on-surface) / .1);
-      border-color: var(--color-outline-variant);
+      border-color: var(--md-color-outline-variant);
     }
 
     &.mat-button--togglable {
-      color: var(--color-on-surface);
-      border-color: var(--color-outline-variant);
+      color: var(--md-color-on-surface-variant);
+      border-color: var(--md-color-outline-variant);
 
       &.toggled {
-        color: var(--color-inverse-on-surface);
-        background-color: var(--color-inverse-surface);
-        border-color: var(--color-inverse-surface);
+        color: var(--md-color-inverse-on-surface);
+        background-color: var(--md-color-inverse-surface);
+        border-color: var(--md-color-inverse-surface);
         border-radius: var(--mat-btn-radius-square);
+
+        &.mat-button--disabled {
+          border-color: transparent;
+        }
       }
 
       &.pressed {
         border-radius: var(--mat-btn-radius-pressed);
       }
-
-      &.mat-button--disabled {
-        color: --alpha(var(--color-on-surface) / .38);
-        background-color: --alpha(var(--color-on-surface) / .1);
-        border-color: --alpha(var(--color-on-surface) / .1);
-      }
     }
   }
 
-  &.mat-button-variant-text {
+  &.mat-button--variant-text {
     background-color: transparent;
-    color: var(--color-primary);
+    color: var(--md-color-primary);
   }
 
   &.pressed {
@@ -459,20 +421,18 @@ const handlePressUp = async () => {
   }
 
   &.mat-button--disabled {
-    color: --alpha(var(--color-on-surface) / .38);
-    background-color: --alpha(var(--color-on-surface) / .1);
+    color: var(--md-color-on-surface) !important;
+    background-color: transparent !important;
+    opacity: .38;
+
+    .mat-button--state-layer {
+      background-color: var(--md-color-on-surface) !important;
+      opacity: .38;
+    }
   }
 
   .mat-button--content {
     font-weight: 500;
-  }
-
-  &.text--white:not(.mat-button--text):not(.mat-button--outlined) {
-    color: var(--color-surface);
-  }
-
-  &.text--black:not(.mat-button--text):not(.mat-button--outlined) {
-    color: var(--color-on-surface);
   }
 
   &::after {
@@ -482,28 +442,6 @@ const handlePressUp = async () => {
 
   &.mat-button--block {
     display: flex;
-  }
-
-  &.mat-button--icon {
-    padding: 0;
-    min-width: initial;
-    width: 36px;
-    border-radius: calc(infinity * 1px);
-  }
-
-  &.custom-color {
-    color: var(--mat-btn-text-color);
-    background-color: var(--mat-btn-color);
-
-    &.mat-button-variant-text,
-    &.mat-button-variant-outlined {
-      color: var(--mat-btn-color);
-      background-color: transparent;
-    }
-
-    &.mat-button-variant-outlined {
-      border: var(--mat-btn-border-size) solid var(--mat-btn-color);
-    }
   }
 
   .slot-prepend-icon,
@@ -528,125 +466,6 @@ const handlePressUp = async () => {
   .append-icon {
     .material-icons {
       font-size: var(--mat-btn-icon-size);
-    }
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .mat-button {
-    --mat-btn-color: var(--color-dark-surface);
-    --mat-btn-text-color: var(--color-dark-on-surface);
-
-    &.mat-button-variant-filled {
-      color: var(--color-dark-on-primary);
-      background-color: var(--color-dark-primary);
-
-      &.mat-button--disabled {
-        color: --alpha(var(--color-dark-on-surface) / .38);
-        background-color: --alpha(var(--color-dark-on-surface) / .1);
-      }
-
-      &.mat-button--togglable {
-        color: var(--color-dark-on-surface);
-        background-color: var(--color-dark-surface-container);
-
-        &.toggled {
-          color: var(--color-dark-on-primary);
-          background-color: var(--color-dark-primary);
-        }
-
-        &.mat-button--disabled {
-          color: --alpha(var(--color-dark-on-surface) / .38);
-          background-color: --alpha(var(--color-dark-on-surface) / .1);
-        }
-      }
-    }
-
-    &.mat-button-variant-elevated {
-      color: var(--color-dark-primary);
-      background-color: var(--color-dark-surface-container-low);
-
-      &.mat-button--disabled {
-        color: --alpha(var(--color-dark-on-surface) / .38);
-        background-color: --alpha(var(--color-dark-on-surface) / .1);
-      }
-
-      &.mat-button--togglable {
-        color: var(--color-dark-primary);
-        background-color: var(--color-dark-surface-container-low);
-
-        &.toggled {
-          color: var(--color-dark-on-primary);
-          background-color: var(--color-dark-primary);
-        }
-
-        &.mat-button--disabled {
-          color: --alpha(var(--color-dark-on-surface) / .38);
-          background-color: --alpha(var(--color-dark-on-surface) / .1);
-        }
-      }
-    }
-
-    &.mat-button-variant-tonal {
-      color: var(--color-dark-on-secondary-container);
-      background-color: var(--color-dark-secondary-container);
-
-      &.mat-button--disabled {
-        color: --alpha(var(--color-dark-on-surface) / .38);
-        background-color: --alpha(var(--color-dark-on-surface) / .1);
-      }
-
-      &.mat-button--togglable {
-        color: var(--color-dark-on-secondary-container);
-        background-color: var(--color-dark-secondary-container);
-
-        &.toggled {
-          color: var(--color-dark-on-secondary);
-          background-color: var(--color-dark-secondary);
-        }
-
-        &.mat-button--disabled {
-          color: --alpha(var(--color-dark-on-surface) / .38);
-          background-color: --alpha(var(--color-dark-on-surface) / .1);
-        }
-      }
-    }
-
-    &.mat-button-variant-outlined {
-      color: var(--color-dark-on-surface);
-      border-color: var(--color-dark-outline-variant);
-
-      &.mat-button--disabled {
-        color: --alpha(var(--color-dark-on-surface) / .38);
-        background-color: --alpha(var(--color-dark-on-surface) / .1);
-        border-color: var(--color-dark-outline-variant);
-      }
-
-      &.mat-button--togglable {
-        color: var(--color-dark-on-surface);
-        border-color: var(--color-dark-outline-variant);
-
-        &.toggled {
-          color: var(--color-dark-inverse-on-surface);
-          background-color: var(--color-dark-inverse-surface);
-          border-color: var(--color-dark-inverse-surface);
-        }
-
-        &.mat-button--disabled {
-          color: --alpha(var(--color-dark-on-surface) / .38);
-          background-color: --alpha(var(--color-dark-on-surface) / .1);
-          border-color: --alpha(var(--color-dark-on-surface) / .1);
-        }
-      }
-    }
-
-    &.mat-button-variant-text {
-      color: var(--color-dark-primary);
-    }
-
-    &.mat-button--disabled {
-      color: --alpha(var(--color-dark-on-surface) / .38);
-      background-color: --alpha(var(--color-dark-on-surface) / .1);
     }
   }
 }

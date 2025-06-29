@@ -18,8 +18,8 @@
               variant="outlined"
               size="xs"
               togglable
-              :toggled="btnState.rounded"
-              @click="btnState.rounded = !btnState.rounded"
+              :toggled="btnState.sharpe === 'rounded'"
+              @click="btnState.sharpe = btnState.sharpe === 'rounded' ? 'square' : 'rounded'"
             >
               圆形
             </mat-button>
@@ -55,7 +55,7 @@
           <div class="mt-2 flex flex-wrap gap-2">
             <mat-button
               variant="filled"
-              :rounded="btnState.rounded"
+              :sharpe="btnState.sharpe"
               :togglable="btnState.togglable"
               :toggled="btnState.toggled"
               :disabled="btnState.disabled"
@@ -64,7 +64,7 @@
             </mat-button>
             <mat-button
               variant="tonal"
-              :rounded="btnState.rounded"
+              :sharpe="btnState.sharpe"
               :togglable="btnState.togglable"
               :toggled="btnState.toggled"
               :disabled="btnState.disabled"
@@ -73,7 +73,7 @@
             </mat-button>
             <mat-button
               variant="elevated"
-              :rounded="btnState.rounded"
+              :sharpe="btnState.sharpe"
               :togglable="btnState.togglable"
               :toggled="btnState.toggled"
               :disabled="btnState.disabled"
@@ -82,7 +82,7 @@
             </mat-button>
             <mat-button
               variant="outlined"
-              :rounded="btnState.rounded"
+              :sharpe="btnState.sharpe"
               :togglable="btnState.togglable"
               :toggled="btnState.toggled"
               :disabled="btnState.disabled"
@@ -91,12 +91,23 @@
             </mat-button>
             <mat-button
               variant="text"
-              :rounded="btnState.rounded"
+              :sharpe="btnState.sharpe"
               :togglable="btnState.togglable"
               :toggled="btnState.toggled"
               :disabled="btnState.disabled"
             >
               text
+            </mat-button>
+          </div>
+
+          <div class="mt-2">
+            <mat-button
+              :variant="currentBtn[0]"
+              :color="currentBtn[1]"
+              :sharpe="currentBtn[2]"
+              size="md"
+            >
+              按钮
             </mat-button>
           </div>
 
@@ -148,6 +159,7 @@
               home
             </mat-button>
             <mat-button
+              variant="tonal"
               size="lg"
               append-icon="close"
             >
@@ -161,19 +173,49 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import {
+  reactive,
+  ref,
+} from 'vue';
 import { onReady } from '@dcloudio/uni-app';
 import MpPage from '@/components/MpPage.vue';
 import MatButton from '@/components/MatButton.vue';
 
 const btnState = reactive({
-  rounded: true,
+  sharpe: 'rounded',
   togglable: false,
   toggled: false,
   disabled: false,
 });
 
+const currentBtn = ref(['filled', '', 'rounded']);
+
 const init = () => {
+  setInterval(() => {
+    const variantMap = [
+      'filled',
+      'tonal',
+      'elevated',
+      'outlined',
+      'text',
+    ];
+    const colorMap = [
+      '',
+      '#fe9a00',
+      '#432dd7',
+      '#00786f',
+      '#e7000b',
+    ];
+    const sharpeMap = [
+      'rounded',
+      'square',
+    ];
+    currentBtn.value = [
+      variantMap[Math.round(Math.random() * variantMap.length)],
+      colorMap[Math.round(Math.random() * colorMap.length)],
+      sharpeMap[Math.round(Math.random() * sharpeMap.length)],
+    ];
+  }, 1200);
 };
 onReady(() => {
   setTimeout(init, 0);

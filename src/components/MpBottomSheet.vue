@@ -149,8 +149,8 @@ const outsideClose = () => {
     right: 0;
     bottom: 0;
     opacity: 0;
-    background-color: rgba(0, 0, 0, .6);
-    transition: opacity ease .1s;
+    background-color: rgba(0, 0, 0, .32);
+    transition: opacity var(--ease-md-accelerate) .1s;
 
     &.open-active {
       opacity: 1;
@@ -169,9 +169,9 @@ const outsideClose = () => {
     width: 100%;
     max-width: var(--mp-page-max-width);
     max-height: calc(100% - 120px);
-    border-radius: 12px 12px 0 0;
-    background-color: #fff;
-    transition: transform ease .3s;
+    border-radius: 28px 28px 0 0;
+    background-color: var(--md-color-surface-container-low);
+    transition: transform var(--ease-md-standard) .3s;
 
     .header {
       padding: 0 20px;
@@ -206,7 +206,6 @@ const outsideClose = () => {
 
     .material-icons {
       font-size: 24px;
-      color: #000;
     }
   }
 

@@ -162,22 +162,13 @@ onReady(() => {
 </template>
 
 <style scoped lang="postcss">
-@reference '../assets/style/app.css';
-
 .mp-page {
   .mp-content {
-    --mp-background-color: var(--color-surface);
+    --mp-background-color: var(--md-color-surface);
     flex-grow: 1;
     overflow-y: auto;
-    color: var(--color-on-surface);
+    color: var(--md-color-on-surface);
     background-color: var(--mp-background-color);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .mp-content {
-      --mp-background-color: var(--color-dark-surface);
-      color: var(--color-dark-on-surface);
-    }
   }
 
   .floating-frame {

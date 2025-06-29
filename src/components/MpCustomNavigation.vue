@@ -1,9 +1,9 @@
 <script setup>
-import { computed, ref, useSlots } from 'vue';
+import { computed, useSlots } from 'vue';
 import { onReady } from '@dcloudio/uni-app';
-import { getContrastYIQ, jump, pageBack } from '@/utils';
+import { jump, pageBack } from '@/utils';
 
-const props = defineProps({
+defineProps({
   title: {
     type: String,
     default: '',
@@ -87,24 +87,18 @@ onReady(() => {
   </div>
 </template>
 
-<style scoped lang="scss">
-@reference '../assets/style/app.css';
-
+<style scoped lang="css">
 .custom-navigation {
-  --mp-nav-bg-color: var(--color-surface);
-  --mp-nav-bg-color-scrolled: var(--color-surface-container);
-  --mp-nav-color: var(--color-on-surface);
+  --mp-nav-bg-color: var(--md-color-surface);
+  --mp-nav-bg-color-scrolled: var(--md-color-surface-container);
+  --mp-nav-color: var(--md-color-on-surface);
   position: relative;
   width: 100%;
   flex-shrink: 0;
   flex-grow: 0;
-  background-color: var(--mp-nav-bg-color);
+  background-color: var(--md-color-surface);
   overflow: hidden;
   z-index: 1000;
-
-  &.scrolled {
-    --mp-nav-bg-color: var(--mp-nav-bg-color-scrolled);
-  }
 
   .page-title {
     display: flex;
@@ -113,13 +107,21 @@ onReady(() => {
     right: 0;
     padding: 0 16px;
     font-weight: 500;
-    color: var(--mp-nav-color);
-    background-color: var(--mp-nav-bg-color);
+    color: var(--md-color-on-surface);
+    background-color: var(--md-color-surface);
     z-index: 1200;
 
     .title {
       font-size: 1rem;
       z-index: 1200;
+    }
+  }
+
+  &.scrolled {
+    background-color: var(--md-color-surface-container);
+
+    .page-title {
+      background-color: var(--md-color-surface-container);
     }
   }
 
@@ -157,14 +159,6 @@ onReady(() => {
       padding-left: 0;
       transform: translateX(-50%);
     }
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .custom-navigation {
-    --mp-nav-bg-color: var(--color-dark-surface);
-    --mp-nav-bg-color-scrolled: var(--color-dark-surface-container);
-    --mp-nav-color: var(--color-dark-on-surface);
   }
 }
 </style>
