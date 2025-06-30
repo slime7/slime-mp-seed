@@ -6,9 +6,9 @@
       <div class="p-4 flex flex-col gap-y-4">
         <div class="flex justify-center">
           <mat-button
-            @click="jump('/pages/component-show-case')"
+            @click="jump('/pages/demo/index')"
           >
-            组件展示
+            使用示例
           </mat-button>
         </div>
 

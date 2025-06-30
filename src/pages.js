@@ -5,7 +5,19 @@ const pages = {
       disableScroll: true,
     },
     {
-      path: 'pages/component-show-case',
+      path: 'pages/demo/index',
+      disableScroll: true,
+    },
+    {
+      path: 'pages/demo/button',
+      disableScroll: true,
+    },
+    {
+      path: 'pages/demo/dialog',
+      disableScroll: true,
+    },
+    {
+      path: 'pages/demo/form',
       disableScroll: true,
     },
     {

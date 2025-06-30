@@ -1,6 +1,6 @@
 <template>
   <mp-page
-    title="组件"
+    title="按钮"
   >
     <div class="mp-body flex flex-col flex-auto">
       <div class="flex flex-col gap-y-4 p-4">
@@ -223,5 +223,5 @@ onReady(() => {
 </script>
 
 <style scoped lang="postcss">
-@reference '../assets/style/app.css';
+@reference '../../assets/style/app.css';
 </style>

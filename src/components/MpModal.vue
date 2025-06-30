@@ -7,6 +7,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  /**
+   * @type {'basic' | 'confirm' | 'alert'}
+   * @default 'basic'
+   */
+  type: {
+    type: String,
+    default: 'basic',
+  },
   closeOutside: {
     type: Boolean,
     default: false,
@@ -14,10 +22,6 @@ const props = defineProps({
   title: {
     type: String,
     default: '',
-  },
-  hideTitleBar: {
-    type: Boolean,
-    default: false,
   },
   cancelText: {
     type: String,
@@ -35,12 +39,15 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  icon: {
+    type: String,
+    default: '',
+  },
 });
 const {
   modelValue,
   closeOutside,
   title,
-  hideTitleBar,
   cancelText,
   confirmText,
   hiddenAfterClose,
@@ -114,25 +121,32 @@ const confirm = (ev) => {
         'close-active': closeActive,
       }"
     >
+      <div v-if="icon" class="flex center mb-4">
+        <div class="dialog-icon flex items-center">
+          <div class="material-icons">
+            {{ icon }}
+          </div>
+        </div>
+      </div>
+
       <div
-        v-if="!hideTitleBar"
-        class="header flex items-center mb-3"
+        v-if="title"
+        class="header flex mb-4"
+        :class="{ 'justify-center': !!icon }"
         @touchmove.stop.prevent="noop"
       >
-        <div class="title flex-auto">
+        <div class="title">
           {{ title }}
         </div>
       </div>
 
       <slot />
 
-      <div class="modal-actions mt-5 flex gap-x-4 justify-center">
-        <div v-if="cancelText" class="flex-auto">
+      <div class="modal-actions mt-6 flex gap-x-2 justify-end">
+        <div v-if="cancelText" class="">
           <mat-button
-            rounded
-            outlined
-            block
-            height="48px"
+            variant="text"
+            size="sm"
             :disabled="loading"
             @click="close"
           >
@@ -140,27 +154,30 @@ const confirm = (ev) => {
           </mat-button>
         </div>
 
-        <div class="confirm-slot flex-auto">
-          <slot name="confirm" />
-        </div>
-        <div class="confirm flex-auto">
-          <mat-button
-            color="primary"
-            rounded
-            block
-            height="48px"
-            :disabled="loading"
-            @click="confirm"
-          >
-            {{ confirmText }}
-          </mat-button>
-        </div>
+        <block v-if="type !== 'alert'">
+          <div class="confirm-slot">
+            <slot name="confirm" />
+          </div>
+          <div class="confirm">
+            <mat-button
+              :variant="type === 'confirm' ? 'tonal' : 'text'"
+              size="sm"
+              :disabled="loading"
+              @click="confirm"
+            >
+              {{ confirmText }}
+            </mat-button>
+          </div>
+        </block>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
+@reference 'tailwindcss';
+@reference '../assets/style/app.css';
+
 .modal-frame {
   position: fixed;
   left: 0;
@@ -176,8 +193,8 @@ const confirm = (ev) => {
     right: 0;
     bottom: 0;
     opacity: 0;
-    background-color: rgba(0, 0, 0, .6);
-    transition: opacity ease .1s;
+    background-color: var(--color-md-scrim);
+    transition: opacity var(--ease-md-standard) .1s;
 
     &.open-active {
       opacity: 1;
@@ -189,26 +206,41 @@ const confirm = (ev) => {
   }
 
   .dialog {
+    @apply text-sm;
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate3d(-50%, -50%, 0) scale(.6);
-    padding: 20px 32px 32px;
-    width: calc(100vw - 70px);
-    max-width: calc(var(--mp-page-max-width) - 70px);
-    border-radius: 12px;
+    padding: --spacing(6);
+    min-width: 280px;
+    max-width: min(560px, calc(var(--mp-page-max-width) - 48px));
+    min-height: 130px;
+    max-height: min(560px, 100% - 48px);
+    height: fit-content;
+    width: fit-content;
+    border-radius: 28px;
     opacity: 0;
-    background-color: #fff;
-    transition: all ease .3s;
+    font-weight: 400;
+    color: var(--md-color-on-surface-variant);
+    background-color: var(--md-color-surface-container-high);
+    transition: all var(--ease-md-decelerate) .3s;
     transform-origin: center;
+    box-shadow: var(--shadow-md-level-3);
+
+    .dialog-icon {
+      color: var(--md-color-secondary);
+
+      .material-icons {
+        font-size: 24px;
+      }
+    }
 
     .header {
-      padding: 0 20px;
-      font-size: 18px;
-      font-weight: bold;
+      color: var(--md-color-on-surface);
 
       .title {
-        text-align: center;
+        @apply text-2xl;
+        font-weight: bold;
       }
     }
 
@@ -221,6 +253,7 @@ const confirm = (ev) => {
       opacity: 0;
       transform: translate3d(-50%, -50%, 0) scale(.8);
       transition-duration: .1s;
+      transition-timing-function: var(--ease-md-accelerate);
     }
 
     .modal-actions {

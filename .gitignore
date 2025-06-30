@@ -22,3 +22,5 @@ yarn-error.log*
 *.sln
 *.sw*
 /src/pages.json
+/font-subset/*.woff2
+/font-subset/base64.txt

@@ -41,7 +41,7 @@ const handlePageBack = () => {
   if (pages.length > 1) {
     pageBack(1);
   } else {
-    jump('home', tabMode ? 'tab' : 'replace');
+    jump('/pages/home', tabMode ? 'tab' : 'replace');
   }
 };
 

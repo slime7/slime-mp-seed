@@ -159,8 +159,11 @@ export default (url, requestOptions = {}) => {
               finallyFn(true);
               resolve();
             } catch (err) {
-              responseError.value = err;
-              reject(err);
+              const error = apiError(err, {
+                response: httpResponse,
+              });
+              responseError.value = error;
+              reject(error);
 
               finallyFn(true);
             }

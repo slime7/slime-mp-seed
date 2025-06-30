@@ -149,7 +149,7 @@ const outsideClose = () => {
     right: 0;
     bottom: 0;
     opacity: 0;
-    background-color: rgba(0, 0, 0, .32);
+    background-color: var(--color-md-scrim);
     transition: opacity var(--ease-md-accelerate) .1s;
 
     &.open-active {

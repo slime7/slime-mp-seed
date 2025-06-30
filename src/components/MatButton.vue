@@ -335,7 +335,7 @@ const handlePressUp = async () => {
   &.mat-button--variant-elevated {
     color: var(--md-color-primary);
     background-color: var(--md-color-surface-container-low);
-    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px rgba(0, 0, 0, .14), 0 1px 5px rgba(0, 0, 0, .12);
+    box-shadow: var(--shadow-md-level-1);
 
     &.mat-button--togglable {
       &.toggled {
@@ -427,7 +427,7 @@ const handlePressUp = async () => {
 
     .mat-button--state-layer {
       background-color: var(--md-color-on-surface) !important;
-      opacity: .38;
+      opacity: .32;
     }
   }
 

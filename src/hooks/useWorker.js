@@ -2,7 +2,6 @@ import { onUnmounted } from 'vue';
 
 const workerManager = (() => {
   let workerInstance = null;
-  // Map<invocationId, { promiseControl: { resolve, reject }, listeners: Map<eventName, Set<callback>> }>
   const activeInvocations = new Map();
 
   const config = {
@@ -103,6 +102,7 @@ const workerManager = (() => {
 
     workerInstance.postMessage({ invocationId, method, args });
 
+    // 返回一个包含 then/catch/on/cancel 方法的自定义对象
     return {
       then: promise.then.bind(promise),
       catch: promise.catch.bind(promise),
@@ -151,7 +151,6 @@ export default function useWorker() {
      */
     get(target, prop) {
       return (...args) => {
-        // [关键] 调用改造后的 callWorker
         const task = workerManager.callWorker(prop, ...args);
         // 追踪由该组件实例创建的任务
         activeTasks.add(task);
