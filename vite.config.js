@@ -33,6 +33,7 @@ export default defineConfig({
   plugins: [
     uni(),
     UnifiedViteWeappTailwindcssPlugin({
+      disabled: process.env.UNI_PLATFORM === 'h5',
       tailwindcss: {
         // 显示声明用的是 tailwindcss v4
         version: 4,
