@@ -149,13 +149,14 @@ export default {
     opacity: 0;
     transform: scale(.6);
     transition-property: transform, opacity;
-    transition-timing-function: var(--ease-md-accelerate), linear;
+    transition-timing-function: var(--ease-md-decelerate), linear;
     transition-duration: 150ms, 50ms;
   }
 
   .bg-checkbox {
     inset: 0;
     position: absolute;
+    border-radius: 2px;
     background-color: var(--md-color-primary);
   }
 
@@ -172,14 +173,14 @@ export default {
 
   &.selected {
     .checkbox-outline {
-      border-radius: 0;
+      border-width: 0;
       border-color: var(--md-color-primary);
     }
 
     .checkbox-transition {
       opacity: 1;
       transform: scale(1);
-      transition: transform, opacity var(--ease-md-decelerate), linear 350ms, 50ms;
+      transition: transform, opacity var(--ease-md-accelerate), linear 350ms, 50ms;
     }
   }
 
