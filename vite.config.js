@@ -29,6 +29,7 @@ const copySubMain = () => ({
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/slime-mp-seed',
   plugins: [
     uni(),
     UnifiedViteWeappTailwindcssPlugin({
