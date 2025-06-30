@@ -23,6 +23,7 @@
     "dev:mp-weixin": "cross-env UNI_OUTPUT_DIR=dist/build/mp-weixin uni -p mp-weixin",
     "build:mp-weixin": "uni build -p mp-weixin",
     "dev:h5": "uni -p h5",
+    "build:h5": "uni build -p h5",
     "lint": "eslint --fix --ext .js,.jsx,.vue src/",
     "lint:nofix": "eslint --ext .js,.jsx,.vue src/",
     "upgrade-uni-app": "npx @dcloudio/uvm@latest vue3",
