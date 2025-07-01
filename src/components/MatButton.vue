@@ -1,8 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
-import { argbFromHex } from '@material/material-color-utilities';
-import { getThemeStyles, themeFromSourceColor } from '@/utils/theme-helper';
 import useGlobalStore from '@/store/global';
+import useThemeColor from '@/hooks/useThemeColor';
 
 const props = defineProps({
   className: {
@@ -132,12 +131,8 @@ const btnIconClass = computed(() => (props.icon ? 'mat-button--icon' : ''));
 
 // 自定义颜色
 const themeStyles = computed(() => {
-  if (!props.color || !/^#[0-9a-f]{6}$/i.test(props.color)) {
-    return {};
-  }
-  const theme = themeFromSourceColor(argbFromHex(props.color), 'SchemeTonalSpot', 0.0, []);
   const isDark = store.deviceInfo.theme === 'dark';
-  return getThemeStyles(theme, { dark: isDark });
+  return useThemeColor(props.color, isDark);
 });
 
 const handleClick = (ev) => {

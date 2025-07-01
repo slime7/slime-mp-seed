@@ -54,7 +54,7 @@ const pages = {
   },
 };
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development' || process.env.UNI_PLATFORM === 'h5') {
   pages.pages.push({
     path: 'pages/test/index',
     disableScroll: true,

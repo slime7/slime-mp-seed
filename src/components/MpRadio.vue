@@ -16,7 +16,7 @@ const props = defineProps({
   },
   label: {
     type: String,
-    required: true,
+    default: '',
   },
   value: {
     type: String,
@@ -24,7 +24,7 @@ const props = defineProps({
   },
 });
 
-const { model: groupModel, updateModel } = inject('radio-group-value', {
+const { model: groupModel = () => '', updateModel } = inject('radio-group-value', {
   mode: ref(''),
   updateModel: () => {},
 });
@@ -42,7 +42,6 @@ watch(groupModel, (v) => {
   internalValue.value = v === props.value;
 }, { immediate: true });
 const onChange = (ev) => {
-  console.log('onChange', ev.detail);
   internalValue.value = true;
   updateModel(props.value);
 };

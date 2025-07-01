@@ -18,7 +18,7 @@
 
       <div class="mt-4 flex center gap-x-2">
         <mat-loader />
-        <mat-loader :progress="loadingProgress" />
+        <mat-loader :progress="loadingProgress" color="#3b82f6" />
       </div>
 
       <div class="mt-2">
@@ -201,10 +201,10 @@ const {
   isLoading: loadingWorker,
   error: errorWorker,
 } = useWorker();
-watch(errorWorker, (err) => {
+watch(() => errorWorker, (err) => {
   console.log(err);
 });
-watch(loadingWorker, (loading) => {
+watch(() => loadingWorker, (loading) => {
   console.log('loading', loading);
 });
 const modalVisible = ref(false);

@@ -25,6 +25,7 @@ const useGlobalStore = defineStore('globalStore', {
       deviceId: '',
       pixelRatio: 1,
     },
+    preventNativeBack: false,
     pageShareData: {
       order: {
         refreshList: false,
@@ -47,6 +48,9 @@ const useGlobalStore = defineStore('globalStore', {
     },
     setDarkMode(isDark) {
       this.deviceInfo.theme = isDark ? 'dark' : 'light';
+    },
+    setPreventNativeBack(isPrevent) {
+      this.preventNativeBack = isPrevent;
     },
     async initDeviceInfo() {
       let isH5 = false;

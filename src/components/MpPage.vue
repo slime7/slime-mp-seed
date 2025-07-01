@@ -28,14 +28,6 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  ignorePolicy: {
-    type: Boolean,
-    default: false,
-  },
-  preventPageBack: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const emits = defineEmits(['scroll', 'scrolltolower', 'pageBack', 'scrolltoupper']);
@@ -43,6 +35,7 @@ const emits = defineEmits(['scroll', 'scrolltolower', 'pageBack', 'scrolltoupper
 const store = useGlobalStore();
 const toastStore = useToastStore();
 const pageContainerVisible = ref(true);
+const preventPageBack = computed(() => store.preventNativeBack);
 
 const deviceInfo = computed(() => store.deviceInfo);
 const theme = computed(() => store.deviceInfo.theme);
@@ -64,7 +57,7 @@ const onReachTop = (ev) => {
 };
 
 const afterBackBtn = () => {
-  if (props.preventPageBack) {
+  if (preventPageBack.value) {
     emits('pageBack', null);
     pageContainerVisible.value = false;
     setTimeout(() => {
