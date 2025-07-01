@@ -152,7 +152,10 @@
               model-value: {{ radio }}
             </div>
             <div>
-              <mp-radio-group v-model="radio">
+              <mp-radio-group
+                v-model="radio"
+                label="请选择"
+              >
                 <mp-radio
                   value="option 1"
                   label="选项 1"

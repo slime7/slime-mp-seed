@@ -49,7 +49,7 @@ const onChange = (ev) => {
 </script>
 
 <template>
-  <label class="mp-radio-label inline-flex items-center">
+  <label class="mp-radio-label flex items-center">
     <div
       class="mp-radio"
       :class="{
@@ -75,7 +75,7 @@ const onChange = (ev) => {
       </div>
     </div>
 
-    <div v-if="label" class="label-text pl-2">{{ label }}</div>
+    <div v-if="label" class="label-text -m-2">{{ label }}</div>
   </label>
 </template>
 
@@ -85,7 +85,7 @@ const onChange = (ev) => {
 
 :host {
   position: relative;
-  display: inline-flex;
+  display: flex;
   vertical-align: top;
 }
 
