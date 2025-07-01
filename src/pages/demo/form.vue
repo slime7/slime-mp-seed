@@ -64,32 +64,10 @@
           </div>
 
           <div class="text-sm mt-2">
-            错误禁用
-          </div>
-
-          <div class="mt-2 flex flex-wrap items-center gap-4">
-            <mp-checkbox
-              :model-value="true"
-              error
-              disabled
-            />
-            <mp-checkbox
-              :model-value="false"
-              error
-              disabled
-            />
-            <mp-checkbox
-              :indeterminate="true"
-              error
-              disabled
-            />
-          </div>
-
-          <div class="text-sm mt-2">
             label
           </div>
 
-          <div class="mt-2 flex flex-col gap-2">
+          <div class="mt-2 flex flex-wrap gap-4">
             <div>
               <mp-checkbox
                 v-model="checked"
@@ -105,6 +83,30 @@
             </div>
           </div>
 
+          <div class="text-sm mt-2">
+            2个 checkbox 使用同一个数组 model
+          </div>
+
+          <div class="mt-2 text-sm">
+            {{ checkboxArray }}
+          </div>
+          <div class="flex gap-2">
+            <div>
+              <mp-checkbox
+                v-model="checkboxArray"
+                value="apple"
+                label="apple"
+              />
+            </div>
+            <div>
+              <mp-checkbox
+                v-model="checkboxArray"
+                value="banana"
+                label="banana"
+              />
+            </div>
+          </div>
+
           <div class="text-base font-bold">
             radio
           </div>
@@ -113,13 +115,53 @@
             普通
           </div>
 
+          <div class="mt-2 flex flex-wrap gap-x-4 gap-y-2">
+            <mp-radio />
+
+            <mp-radio-group model-value="option 1">
+              <mp-radio
+                value="option 1"
+              />
+            </mp-radio-group>
+
+            <mp-radio-group model-value="option 1">
+              <mp-radio
+                value="option 1"
+                error
+              />
+            </mp-radio-group>
+
+            <mp-radio
+              disabled
+            />
+
+            <mp-radio-group model-value="option 1">
+              <mp-radio
+                value="option 1"
+                disabled
+              />
+            </mp-radio-group>
+          </div>
+
+          <div class="text-sm mt-2">
+            绑定值
+          </div>
+
           <div class="mt-2">
-            <div><radio value="1" /><span>1</span></div>
-            <div><radio value="2" /><span>2</span></div>
-            <div><radio value="3" /><span>3</span></div>
-            <div><radio v-if="!radioReset" value="4" :checked="radioChecked" @click="radioChecked = !radioChecked" /><span>4</span></div>
+            <div class="text-sm">
+              model-value: {{ radio }}
+            </div>
             <div>
-              <mp-checkbox v-model="radioChecked" />
+              <mp-radio-group v-model="radio">
+                <mp-radio
+                  value="option 1"
+                  label="选项 1"
+                />
+                <mp-radio
+                  value="option 2"
+                  label="选项 2"
+                />
+              </mp-radio-group>
             </div>
           </div>
         </div>
@@ -130,29 +172,17 @@
 
 <script setup>
 import {
-  reactive,
   ref,
-  watch,
 } from 'vue';
 import { onReady } from '@dcloudio/uni-app';
 import MpPage from '@/components/MpPage.vue';
-import MatButton from '@/components/MatButton.vue';
 import MpCheckbox from '@/components/MpCheckbox.vue';
+import MpRadio from '@/components/MpRadio.vue';
+import MpRadioGroup from '@/components/MpRadioGroup.vue';
 
-const dialog1 = ref(false);
-const dialogIcon = ref('');
-const dialogTitle = ref('');
 const checked = ref(false);
-const radioChecked = ref(true);
-const radioReset = ref(false);
-watch(radioChecked, (v) => {
-  if (v) {
-    radioReset.value = true;
-    setTimeout(() => {
-      radioReset.value = false;
-    }, 0);
-  }
-});
+const checkboxArray = ref(['banana']);
+const radio = ref('');
 
 const init = () => {
 };

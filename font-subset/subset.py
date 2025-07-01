@@ -41,6 +41,8 @@ def subset_material_symbols():
         'U+e5cc', # chevron_right
         'U+ebcc', # calendar_month
         'U+e5c9', # cancel
+        'U+e837', # radio_button_checked
+        'U+e836', # radio_button_unchecked
     ]
     # --- 参数配置结束 ---
 

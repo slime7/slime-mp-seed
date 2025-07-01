@@ -7,7 +7,7 @@ import {
 
 const props = defineProps({
   modelValue: {
-    type: Boolean,
+    type: [Boolean, Array],
     default: false,
   },
   indeterminate: {
@@ -30,6 +30,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  value: {
+    type: String,
+    default: 'on',
+  },
 });
 const emit = defineEmits(['update:modelValue', 'change']);
 const {
@@ -40,23 +44,29 @@ const {
 const internalValue = ref(false);
 const internalIndeterminate = ref(false);
 watchEffect(() => {
-  internalValue.value = modelValue.value;
+  internalValue.value = Array.isArray(modelValue.value) ? modelValue.value.includes(props.value) : !!modelValue.value;
   internalIndeterminate.value = indeterminate.value;
 });
 
 const onChange = (ev) => {
-  const isChecked = ev.detail.value.includes('on');
+  const isChecked = !!ev.detail.value.length;
   if (isChecked) {
     internalIndeterminate.value = false;
   }
   internalValue.value = isChecked;
-  emit('update:modelValue', isChecked);
-  emit('change', ev);
-};
-</script>
-<script>
-export default {
-  behaviors: ['wx://form-field-group'],
+  let returnValue = isChecked;
+  if (Array.isArray(modelValue.value)) {
+    returnValue = [...modelValue.value];
+    const valueIndex = returnValue.indexOf(props.value);
+    if (isChecked) {
+      if (valueIndex === -1) {
+        returnValue.push(props.value);
+      }
+    } else {
+      returnValue = returnValue.toSpliced(valueIndex, 1);
+    }
+  }
+  emit('update:modelValue', returnValue);
 };
 </script>
 
@@ -77,8 +87,8 @@ export default {
         <checkbox
           :disabled="disabled"
           class="checkbox"
-          value="on"
-          :checked="modelValue"
+          :value="value"
+          :checked="internalValue"
         />
       </checkbox-group>
 
@@ -96,6 +106,7 @@ export default {
 </template>
 
 <style scoped lang="postcss">
+@reference 'tailwindcss';
 @reference '../assets/style/app.css';
 
 :host {
