@@ -4,9 +4,9 @@
     :style="{
       width: `${size}px`,
       height: `${size}px`,
+      margin: `${margin}px`,
+      ...themeStyles,
     }"
-    :data-progress="progress"
-    :data-progress-number="+progress"
   >
     <image v-if="isFixedValue" class="fixed-value-circle" :src="fixedCircleSvg" />
     <div
@@ -30,15 +30,11 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import useGlobalStore from '@/store/global';
 import useThemeColor from '@/hooks/useThemeColor';
 
 const props = defineProps({
-  size: {
-    type: [Number, String],
-    default: 32,
-  },
   width: {
     type: [Number, String],
     default: 4,
@@ -57,6 +53,8 @@ const props = defineProps({
   },
 });
 
+const margin = computed(() => (12 - props.width) / 2);
+const size = computed(() => 48 - margin.value * 2);
 const store = useGlobalStore();
 // 自定义颜色
 const themeStyles = computed(() => {
@@ -78,8 +76,11 @@ const trueWidth = computed(() => {
   if (props.width) {
     widthTemp = +props.width;
   }
-  if (props.width * 2 > +props.size) {
-    widthTemp = Math.floor(+props.size / 2);
+  if (props.width >= 12) {
+    widthTemp = 12;
+  }
+  if (props.width <= 4) {
+    widthTemp = 4;
   }
   return widthTemp;
 });
@@ -90,7 +91,7 @@ const fixedCircleSvg = computed(() => {
   }
   const styleVar = `--md-color-primary: ${themeStyles.value['--md-color-primary']}; --md-color-secondary-container: ${themeStyles.value['--md-color-secondary-container']};`;
   const styleSvg = 'transform: rotate(-90deg);';
-  const styleCircle = `cx: 50%; cy: 50%; r: calc(50% * ${1 - ((trueWidth.value * 3) / 100)}); stroke-width: calc(${trueWidth.value * 3} * 1%); stroke-dasharray: 100; fill: rgba(0, 0, 0, 0);`;
+  const styleCircle = `cx: 50%; cy: 50%; r: calc(50% * ${1 - (trueWidth.value / size.value)}); stroke-width: calc(${(100 / size.value) * trueWidth.value} * 1%); stroke-dasharray: 100; fill: rgba(0, 0, 0, 0);`;
   const styleInactive = 'stroke: var(--md-color-secondary-container);';
   const styleActive = 'stroke: var(--md-color-primary);';
   const svgTemplate = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4800 4800" style="${styleVar}${styleSvg}"><circle class="track" pathLength="100" style="${styleCircle}${styleInactive}"></circle><circle class="active-track" pathLength="100" stroke-dashoffset="${100 - internalProgress.value}" style="${styleCircle}${styleActive}"></circle></svg>`;
@@ -168,22 +169,6 @@ const fixedCircleSvg = computed(() => {
 
       .mat-circle {
         width: 200%;
-      }
-    }
-
-    .mat-circle-gap {
-      position: absolute;
-      box-sizing: border-box;
-      top: 0;
-      left: 45%;
-      width: 10%;
-      height: 100%;
-      overflow: hidden;
-      border-color: inherit;
-
-      .mat-circle {
-        width: 1000%;
-        left: -450%;
       }
     }
   }

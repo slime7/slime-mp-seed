@@ -21,6 +21,10 @@ const pages = {
       disableScroll: true,
     },
     {
+      path: 'pages/demo/loader',
+      disableScroll: true,
+    },
+    {
       path: 'pages/qr-redirect',
       disableScroll: true,
     },

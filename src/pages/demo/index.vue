@@ -22,7 +22,7 @@
             block
             @click="jump('pages/demo/dialog')"
           >
-            对话框(dialog)
+            弹出层(modal)
           </mat-button>
         </div>
 
@@ -34,6 +34,17 @@
             @click="jump('pages/demo/form')"
           >
             表单组件
+          </mat-button>
+        </div>
+
+        <div>
+          <mat-button
+            variant="tonal"
+            size="lg"
+            block
+            @click="jump('pages/demo/loader')"
+          >
+            环形加载器(loader)
           </mat-button>
         </div>
       </div>

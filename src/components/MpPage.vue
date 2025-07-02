@@ -5,7 +5,7 @@ import useGlobalStore from '@/store/global';
 import useToastStore from '@/store/toastStore';
 import MpCustomNavigation from './MpCustomNavigation.vue';
 
-const props = defineProps({
+defineProps({
   hideNavigation: {
     type: Boolean,
     default: false,
@@ -38,7 +38,6 @@ const pageContainerVisible = ref(true);
 const preventPageBack = computed(() => store.preventNativeBack);
 
 const deviceInfo = computed(() => store.deviceInfo);
-const theme = computed(() => store.deviceInfo.theme);
 const titleBarScrolled = ref(false);
 const toastVisible = computed(() => toastStore.visible);
 const toastMsg = computed(() => toastStore.msg);
@@ -67,10 +66,6 @@ const afterBackBtn = () => {
 };
 
 onReady(() => {
-  uni.setNavigationBarColor({
-    frontColor: theme.value === 'dark' ? '#ffffff' : '#000000',
-    backgroundColor: theme.value === 'dark' ? '#000000' : '#ffffff',
-  });
 });
 </script>
 
@@ -117,10 +112,12 @@ onReady(() => {
     </scroll-view>
 
     <div class="floating-frame flex flex-col">
-      <div class="flex-grow" />
+      <div class="flex-auto" />
+
       <div class="float-btns shrink-0">
         <slot name="float-action-button" />
       </div>
+
       <div class="toast-parent shrink-0 flex center">
         <div
           v-if="toastVisible"
@@ -130,6 +127,7 @@ onReady(() => {
           {{ toastMsg }}
         </div>
       </div>
+
       <div
         v-if="paddingGestureBar"
         class="gesture-bar-placeholder shrink-0"
@@ -155,6 +153,9 @@ onReady(() => {
 </template>
 
 <style scoped lang="postcss">
+@reference 'tailwindcss';
+@reference '../assets/style/app.css';
+
 .mp-page {
   .mp-content {
     --mp-background-color: var(--md-color-surface);
@@ -183,15 +184,16 @@ onReady(() => {
       z-index: 20;
 
       .toast {
+        @apply text-sm flex items-center;
         margin: 16px 32px;
-        padding: 16px 12px;
+        padding: 0 16px;
         width: calc(100vw - 64px);
         max-width: 320px;
+        height: 48px;
         border-radius: 4px;
-        line-height: 1.5rem;
-        background-color: rgba(0, 0, 0, .87);
-        color: #eee;
-        box-shadow: rgba(0, 0, 0, .2) 0 5px 5px -3px;
+        background-color: var(--md-color-inverse-surface);
+        color: var(--md-color-inverse-on-surface);
+        box-shadow: var(--shadow-md-level-3);
         word-break: break-all;
       }
     }

@@ -64,6 +64,25 @@
           </div>
 
           <div class="text-sm mt-2">
+            自定义颜色
+          </div>
+
+          <div class="mt-2 flex flex-wrap items-center gap-4">
+            <mp-checkbox
+              :model-value="true"
+              color="#fbbc04"
+            />
+            <mp-checkbox
+              :model-value="false"
+              color="#fbbc04"
+            />
+            <mp-checkbox
+              :indeterminate="true"
+              color="#fbbc04"
+            />
+          </div>
+
+          <div class="text-sm mt-2">
             label
           </div>
 
@@ -139,6 +158,13 @@
               <mp-radio
                 value="option 1"
                 disabled
+              />
+            </mp-radio-group>
+
+            <mp-radio-group model-value="option 1">
+              <mp-radio
+                value="option 1"
+                color="#fbbc04"
               />
             </mp-radio-group>
           </div>

@@ -1,9 +1,12 @@
 <script setup>
 import {
+  computed,
   inject,
   ref,
   watch,
 } from 'vue';
+import useGlobalStore from '@/store/global';
+import useThemeColor from '@/hooks/useThemeColor';
 
 const props = defineProps({
   disabled: {
@@ -22,8 +25,14 @@ const props = defineProps({
     type: String,
     default: 'on',
   },
+  /** 主题色 */
+  color: {
+    type: String,
+    default: '',
+  },
 });
 
+const store = useGlobalStore();
 const { model: groupModel = () => '', updateModel } = inject('radio-group-value', {
   mode: ref(''),
   updateModel: () => {},
@@ -41,14 +50,25 @@ watch(internalValue, (v) => {
 watch(groupModel, (v) => {
   internalValue.value = v === props.value;
 }, { immediate: true });
-const onChange = (ev) => {
+
+const themeStyles = computed(() => {
+  const isDark = store.deviceInfo.theme === 'dark';
+  return useThemeColor(props.color, isDark);
+});
+
+const onChange = () => {
   internalValue.value = true;
   updateModel(props.value);
 };
 </script>
 
 <template>
-  <label class="mp-radio-label flex items-center">
+  <label
+    class="mp-radio-label flex items-center"
+    :style="{
+      ...themeStyles,
+    }"
+  >
     <div
       class="mp-radio"
       :class="{

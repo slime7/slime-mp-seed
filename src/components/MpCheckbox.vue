@@ -1,9 +1,12 @@
 <script setup>
 import {
+  computed,
   ref,
   toRefs,
   watchEffect,
 } from 'vue';
+import useGlobalStore from '@/store/global';
+import useThemeColor from '@/hooks/useThemeColor';
 
 const props = defineProps({
   modelValue: {
@@ -34,6 +37,11 @@ const props = defineProps({
     type: String,
     default: 'on',
   },
+  /** 主题色 */
+  color: {
+    type: String,
+    default: '',
+  },
 });
 const emit = defineEmits(['update:modelValue', 'change']);
 const {
@@ -41,11 +49,17 @@ const {
   indeterminate,
 } = toRefs(props);
 
+const store = useGlobalStore();
 const internalValue = ref(false);
 const internalIndeterminate = ref(false);
 watchEffect(() => {
   internalValue.value = Array.isArray(modelValue.value) ? modelValue.value.includes(props.value) : !!modelValue.value;
   internalIndeterminate.value = indeterminate.value;
+});
+
+const themeStyles = computed(() => {
+  const isDark = store.deviceInfo.theme === 'dark';
+  return useThemeColor(props.color, isDark);
 });
 
 const onChange = (ev) => {
@@ -71,7 +85,12 @@ const onChange = (ev) => {
 </script>
 
 <template>
-  <label class="mp-checkbox-label inline-flex items-center">
+  <label
+    class="mp-checkbox-label inline-flex items-center"
+    :style="{
+      ...themeStyles,
+    }"
+  >
     <div v-if="label && labelOnStart" class="label-text">{{ label }}</div>
 
     <div

@@ -228,6 +228,23 @@ image {
   @apply justify-center items-center;
 }
 
+.scroll-wrapper {
+  @apply max-h-full overflow-y-scroll;
+  border-radius: inherit;
+  scrollbar-width: thin;
+  scrollbar-color: var(--md-color-primary);
+
+  &::-webkit-scrollbar {
+    background-color: transparent;
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--md-color-primary);
+    border-radius: 2px;
+  }
+}
+
 .sheet {
   border-radius: 12px;
   background-color: #fff;
@@ -235,34 +252,6 @@ image {
   .sheet-title {
     font-weight: bold;
     color: #222;
-  }
-}
-
-.page-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background-color: rgba(0, 0, 0, .5);
-  z-index: 2;
-
-  .screen-width {
-    margin: 0 auto;
-    width: 100%;
-    max-width: var(--mp-page-max-width);
-    height: 100%;
-  }
-
-  .modal-container {
-    border-radius: 12px;
-    background-color: #fff;
-
-    .text-title {
-      font-size: 20px;
-      font-weight: bold;
-      text-align: center;
-    }
   }
 }
 

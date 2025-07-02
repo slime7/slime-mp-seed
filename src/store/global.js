@@ -46,8 +46,8 @@ const useGlobalStore = defineStore('globalStore', {
         ...payload,
       };
     },
-    setDarkMode(isDark) {
-      this.deviceInfo.theme = isDark ? 'dark' : 'light';
+    setDarkMode(theme) {
+      this.deviceInfo.theme = theme;
     },
     setPreventNativeBack(isPrevent) {
       this.preventNativeBack = isPrevent;

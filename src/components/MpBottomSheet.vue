@@ -4,6 +4,7 @@
     :class="{ 'bottom-sheet-hidden': !internalValue }"
   >
     <div
+      v-if="!hideScrim"
       class="overlay"
       :class="{ 'open-active': openActive, 'close-active': closeActive }"
       @click="outsideClose"
@@ -11,25 +12,35 @@
     />
 
     <div
-      class="content"
-      :class="[classMerge(contentClass, { 'open-active': openActive, 'close-active': closeActive })]"
-      :style="contentStyle"
+      class="bottom-sheet"
+      :class="[
+        { 'open-active': openActive, 'close-active': closeActive },
+        dragState,
+      ]"
+      :style="sheetClass"
     >
       <div
-        v-if="!hideTitleBar"
-        class="header flex items-center"
+        v-if="!hideDragHandler"
+        class="drag-bar h-12 flex center"
+        @pointerdown="onStartDrag"
+        @pointermove="onDrag"
+        @pointerup="onDragEnd"
+        @pointercancel="onDragEnd"
+        @touchstart="onStartDrag"
+        @touchmove="onDrag"
+        @touchend="onDragEnd"
+        @touchcancel="onDragEnd"
+      >
+        <div class="drag-handler" />
+      </div>
+
+      <div
+        v-if="title"
+        class="header flex items-center text-2xl mb-4"
         @touchmove.stop.prevent="noop"
       >
         <div class="title flex-auto">
           {{ title }}
-        </div>
-
-        <div class="close-action-area flex center" @click="close">
-          <div class="close flex center">
-            <text class="material-icons">
-              close
-            </text>
-          </div>
         </div>
       </div>
 
@@ -57,7 +68,6 @@ import {
   watchEffect,
 } from 'vue';
 import useGlobalStore from '@/store/global';
-import { classMerge } from '@/utils';
 
 const props = defineProps({
   modelValue: {
@@ -67,10 +77,6 @@ const props = defineProps({
   closeOutside: {
     type: Boolean,
     default: true,
-  },
-  contentClass: {
-    type: String,
-    default: '',
   },
   contentStyle: {
     type: [String, Object],
@@ -84,7 +90,11 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  hideTitleBar: {
+  hideScrim: {
+    type: Boolean,
+    default: false,
+  },
+  hideDragHandler: {
     type: Boolean,
     default: false,
   },
@@ -131,9 +141,58 @@ const outsideClose = () => {
   }
 };
 
+const dragState = ref('');
+const touchStartY = ref(0);
+const dragDownY = ref(0);
+const onStartDrag = (ev) => {
+  let evDetail = ev;
+  if (ev.detail?.clientY) {
+    evDetail = ev.detail;
+  }
+  if (ev.changedTouches?.[0]) {
+    [evDetail] = ev.changedTouches;
+  }
+  dragState.value = 'drag-start';
+  touchStartY.value = evDetail.clientY;
+};
+const onDrag = (ev) => {
+  let evDetail = ev;
+  if (ev.detail?.clientY) {
+    evDetail = ev.detail;
+  }
+  if (ev.changedTouches?.[0]) {
+    [evDetail] = ev.changedTouches;
+  }
+  if (!dragState.value) {
+    return;
+  }
+  dragState.value = 'drag-active';
+  dragDownY.value = Math.max(evDetail.clientY - touchStartY.value, 0);
+};
+const onDragEnd = (ev) => {
+  dragState.value = '';
+  if (ev.type !== 'touchcancel' && dragDownY.value > 100) {
+    close();
+  }
+};
+
+const sheetClass = computed(() => {
+  const dragStyle = dragState.value === 'drag-active' ? {
+    transform: `translate3d(-50%, ${dragDownY.value}px, 0)`,
+  } : null;
+  if (props.contentStyle) {
+    return [
+      props.contentStyle,
+      dragStyle];
+  }
+  return dragStyle;
+});
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
+@reference 'tailwindcss';
+@reference '../assets/style/app.css';
+
 .bottom-sheet-frame {
   position: fixed;
   left: 0;
@@ -161,27 +220,34 @@ const outsideClose = () => {
     }
   }
 
-  .content {
+  .bottom-sheet {
+    display: block;
     position: absolute;
     left: 50%;
     bottom: 0;
+    top: unset;
     transform: translate3d(-50%, 100%, 0);
     width: 100%;
     max-width: var(--mp-page-max-width);
-    max-height: calc(100% - 120px);
+    max-height: calc(100% - 72px);
+    height: initial;
     border-radius: 28px 28px 0 0;
     background-color: var(--md-color-surface-container-low);
     transition: transform var(--ease-md-standard) .3s;
 
-    .header {
-      padding: 0 20px;
-      font-size: 18px;
-      font-weight: bold;
+    &.drag-active {
+      transition-property: none;
+    }
 
-      .title {
-        padding-left: 48px;
-        text-align: center;
-      }
+    .drag-handler {
+      width: 32px;
+      height: 4px;
+      border-radius: 2px;
+      background-color: var(--md-color-on-surface-variant);
+    }
+
+    .header {
+      padding: 0 24px;
     }
 
     &.open-active {
