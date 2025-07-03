@@ -25,6 +25,10 @@ const pages = {
       disableScroll: true,
     },
     {
+      path: 'pages/demo/scroll-area',
+      disableScroll: true,
+    },
+    {
       path: 'pages/qr-redirect',
       disableScroll: true,
     },
@@ -49,7 +53,7 @@ const pages = {
   globalStyle: {
     backgroundTextStyle: 'light',
     navigationBarTextStyle: 'black',
-    navigationBarTitleText: 'test',
+    navigationBarTitleText: 'slime-mp-seed',
     navigationBarBackgroundColor: '#F8F8F8',
     backgroundColor: '#F8F8F8',
     navigationStyle: 'custom',

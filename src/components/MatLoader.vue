@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import useGlobalStore from '@/store/global';
 import useThemeColor from '@/hooks/useThemeColor';
 

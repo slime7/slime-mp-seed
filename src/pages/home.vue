@@ -1,4 +1,10 @@
 <template>
+  <page-meta>
+    <navigation-bar
+      title="home"
+    />
+  </page-meta>
+  <!-- eslint-disable-next-line vue/no-multiple-template-root -->
   <mp-page
     title="home"
   >

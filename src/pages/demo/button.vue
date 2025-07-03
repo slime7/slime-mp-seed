@@ -1,4 +1,10 @@
 <template>
+  <page-meta>
+    <navigation-bar
+      title="按钮"
+    />
+  </page-meta>
+  <!-- eslint-disable-next-line vue/no-multiple-template-root -->
   <mp-page
     title="按钮"
   >

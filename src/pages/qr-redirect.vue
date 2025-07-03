@@ -21,12 +21,7 @@ import MatLoader from '@/components/MatLoader.vue';
 import { jump } from '@/utils';
 
 const pageNotFound = ref(false);
-const tabPages = [
-  'index',
-  'order',
-  'goods',
-  'profile',
-];
+const tabPages = [];
 
 const parseQuery = (s) => {
   const qs = s.split(',');

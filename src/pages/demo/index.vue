@@ -1,4 +1,10 @@
 <template>
+  <page-meta>
+    <navigation-bar
+      title="示例"
+    />
+  </page-meta>
+  <!-- eslint-disable-next-line vue/no-multiple-template-root -->
   <mp-page
     title="示例"
   >
@@ -45,6 +51,17 @@
             @click="jump('pages/demo/loader')"
           >
             环形加载器(loader)
+          </mat-button>
+        </div>
+
+        <div>
+          <mat-button
+            variant="tonal"
+            size="lg"
+            block
+            @click="jump('pages/demo/scroll-area')"
+          >
+            局部滚动
           </mat-button>
         </div>
       </div>

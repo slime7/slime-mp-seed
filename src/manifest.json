@@ -9,7 +9,6 @@
     "usingComponents": false,
     "darkmode": true,
     "resizable": true,
-    "frameset": true,
     "scopedSlotsCompiler": "augmented",
     "mergeVirtualHostAttributes": true,
     "workers": "static/workers",

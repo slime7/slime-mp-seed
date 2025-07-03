@@ -5,15 +5,22 @@ import {
   watch,
 } from 'vue';
 import MatLoader from './MatLoader.vue';
+import useGlobalStore from '../store/global';
 
 const props = defineProps({
   disabledPullDownRefresh: {
     type: Boolean,
     default: false,
   },
+  paddingGestureBar: {
+    type: Boolean,
+    default: true,
+  },
 });
-const emit = defineEmits(['trigger', 'scroll', 'scrolltolower']);
+const emit = defineEmits(['pull-down', 'scroll', 'scrolltolower']);
 
+const store = useGlobalStore();
+const gestureBarHeight = computed(() => store.deviceInfo.gestureBarHeight);
 const refresherThreshold = 64;
 const internalRefresherEnabled = ref(true);
 const pulledY = ref(0);
@@ -29,11 +36,11 @@ const loadingPercent = computed(() => {
 const onListPulling = (ev) => {
   pulling.value = true;
   pulledY.value = ev.detail.dy;
-  willRefresh.value = pulledY.value > refresherThreshold;
+  willRefresh.value = !willRefresh.value ? pulledY.value > refresherThreshold : true;
 };
 const onListPullDown = (ev) => {
   pulling.value = false;
-  emit('trigger', ev);
+  emit('pull-down', ev);
 };
 const onRefreshAbort = (resetY = true) => {
   if (resetY) {
@@ -69,84 +76,61 @@ const onScrolltolower = (ev) => {
 </script>
 
 <template>
-  <div
+  <scroll-view
     class="mp-scroll-refresher"
+    enhanced
+    :bounces="false"
+    :show-scrollbar="true"
+    scroll-y
+    lower-threshold="10"
+    enable-passive
+    :refresher-enabled="internalRefresherEnabled"
+    :refresher-triggered="listPullDownStatus"
+    :refresher-threshold="refresherThreshold"
+    refresher-default-style="none"
+    @refresherpulling="onListPulling"
+    @refresherrefresh="onListPullDown"
+    @refresherabort="onRefreshAbort()"
+    @scroll="onScroll"
+    @scrolltolower="onScrolltolower"
   >
-    <scroll-view
-      class="scroller"
-      enhanced
-      :bounces="false"
-      :show-scrollbar="false"
-      scroll-y
-      lower-threshold="10"
-      enable-passive
-      :refresher-enabled="internalRefresherEnabled"
-      :refresher-triggered="listPullDownStatus"
-      :refresher-threshold="refresherThreshold"
-      refresher-default-style="none"
-      @refresherpulling="onListPulling"
-      @refresherrefresh="onListPullDown"
-      @refresherabort="onRefreshAbort()"
-      @scroll="onScroll"
-      @scrolltolower="onScrolltolower"
-    >
-      <div
-        class="scroll-frame"
-        :style="{
-          transform: `translate(0, ${(internalRefresherEnabled ? pulledY : refresherThreshold) * -1}px)`,
-        }"
-      >
-        <slot />
+    <div slot="refresher" class="w-full">
+      <div class="loader flex center gap-x-4">
+        <mat-loader :progress="loadingPercent" />
+
+        <div v-if="!willRefresh" class="text-sm">
+          下拉刷新内容
+        </div>
+        <div v-else class="text-sm">
+          松开刷新内容
+        </div>
+        <div>{{ internalRefresherEnabled }}</div>
       </div>
+    </div>
+    <div
+      class="scroll-frame min-h-full"
+    >
+      <slot />
 
       <div
-        class="refresher text-sm py-2 flex justify-center"
+        v-if="paddingGestureBar"
+        class="gesture-bar-placeholder shrink-0"
         :style="{
-          transform: `translate3d(0, ${Math.max(internalRefresherEnabled ? pulledY : 0, refresherThreshold) * -1}px, 0)`,
+          width: '100%',
+          height: `${gestureBarHeight}px`,
+          backgroundColor: 'initial',
         }"
-      >
-        <div class="loader flex center">
-          <mat-loader color="#fff" :progress="loadingPercent" />
-        </div>
-      </div>
-    </scroll-view>
-  </div>
+      />
+    </div>
+  </scroll-view>
 </template>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
+@reference '../assets/style/app.css';
+
 :host,
 .mp-scroll-refresher {
   position: relative;
   height: 100%;
-
-  .scroller {
-    position: relative;
-    height: 100%;
-
-    .scroll-frame {
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      will-change: transform;
-      transform: translate(0, 0);
-    }
-  }
-
-  .refresher {
-    width: 100%;
-    text-align: center;
-    will-change: transform;
-    transform: translate3d(0, -64px, 0);
-
-    .loader {
-      width: 48px;
-      height: 48px;
-      border-radius: 99px;
-      background-color: #0268ff;
-      box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
-    }
-  }
 }
 </style>

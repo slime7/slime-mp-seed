@@ -10,7 +10,8 @@
   "include": [
     "src/**/*.js",
     "src/**/*.jsx",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "src/**/*.css"
   ],
   "files": [
     "src/shime-uni.d.ts"

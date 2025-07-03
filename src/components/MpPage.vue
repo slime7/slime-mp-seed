@@ -12,7 +12,7 @@ defineProps({
   },
   title: {
     type: String,
-    default: '中卓',
+    default: 'test',
   },
   scrollTop: [Number, String],
   scrollIntoView: [String],
@@ -98,17 +98,24 @@ onReady(() => {
       @scrolltolower="scrolltolower"
       @scrolltoupper="onReachTop"
     >
-      <slot />
-
       <div
-        v-if="paddingGestureBar"
-        class="gesture-bar-placeholder shrink-0"
+        class="flex flex-col"
         :style="{
-          width: '100%',
-          height: `${deviceInfo.gestureBarHeight}px`,
-          backgroundColor: 'initial',
+          height: hideNavigation ? '100vh' : `calc(100vh - ${deviceInfo.statusBarHeight + deviceInfo.titleBarHeight}px)`,
         }"
-      />
+      >
+        <slot />
+
+        <div
+          v-if="paddingGestureBar"
+          class="gesture-bar-placeholder shrink-0"
+          :style="{
+            width: '100%',
+            height: `${deviceInfo.gestureBarHeight}px`,
+            backgroundColor: 'initial',
+          }"
+        />
+      </div>
     </scroll-view>
 
     <div class="floating-frame flex flex-col">

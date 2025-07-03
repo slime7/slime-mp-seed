@@ -1,4 +1,10 @@
 <template>
+  <page-meta>
+    <navigation-bar
+      title="加载"
+    />
+  </page-meta>
+  <!-- eslint-disable-next-line vue/no-multiple-template-root -->
   <mp-page
     title="加载"
   >
