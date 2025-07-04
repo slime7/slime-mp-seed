@@ -53,12 +53,13 @@ const pages = {
   globalStyle: {
     backgroundTextStyle: 'light',
     navigationBarTextStyle: 'black',
-    navigationBarTitleText: 'slime-mp-seed',
+    navigationBarTitleText: '',
     navigationBarBackgroundColor: '#F8F8F8',
     backgroundColor: '#F8F8F8',
     navigationStyle: 'custom',
     pageOrientation: 'auto',
     handleWebviewPreload: 'auto',
+    rpxCalcMaxDeviceWidth: Infinity, // 关闭烦人的 h5 自动设置根字体尺寸，大尺寸就配展示更多内容而不是更大内容
   },
 };
 

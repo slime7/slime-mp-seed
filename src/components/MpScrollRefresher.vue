@@ -26,20 +26,23 @@ const internalRefresherEnabled = ref(true);
 const pulledY = ref(0);
 const pulling = ref(false);
 const willRefresh = ref(false);
+const refreshing = ref(false);
 const listPullDownStatus = ref(false);
 const loadingPercent = computed(() => {
-  if (!willRefresh.value) {
+  if (!refreshing.value) {
     return Math.round((Math.min(pulledY.value, refresherThreshold) * 100) / refresherThreshold);
   }
   return null;
 });
 const onListPulling = (ev) => {
   pulling.value = true;
+  refreshing.value = false;
   pulledY.value = ev.detail.dy;
   willRefresh.value = !willRefresh.value ? pulledY.value > refresherThreshold : true;
 };
 const onListPullDown = (ev) => {
   pulling.value = false;
+  refreshing.value = true;
   emit('pull-down', ev);
 };
 const onRefreshAbort = (resetY = true) => {
@@ -98,13 +101,15 @@ const onScrolltolower = (ev) => {
       <div class="loader flex center gap-x-4">
         <mat-loader :progress="loadingPercent" />
 
-        <div v-if="!willRefresh" class="text-sm">
+        <div v-if="refreshing" class="text-sm min-w-[6em]">
+          刷新中
+        </div>
+        <div v-else-if="!willRefresh" class="text-sm">
           下拉刷新内容
         </div>
         <div v-else class="text-sm">
           松开刷新内容
         </div>
-        <div>{{ internalRefresherEnabled }}</div>
       </div>
     </div>
     <div

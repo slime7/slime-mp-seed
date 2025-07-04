@@ -73,7 +73,7 @@ const useGlobalStore = defineStore('globalStore', {
       const isDesktop = system.indexOf('window') + system.indexOf('macos') > -2;
       const isIos = system.indexOf('ios') > -1;
       const isAndroid = system.indexOf('android') > -1;
-      const statusBarHeight = isDesktop ? 0 : windowInfo.statusBarHeight;
+      const statusBarHeight = isDesktop ? 20 : windowInfo.statusBarHeight;
       let titleBarHeight = (!isDesktop ? windowInfo.screenTop : 48) - statusBarHeight;
       if (!isIos) {
         titleBarHeight = 48;

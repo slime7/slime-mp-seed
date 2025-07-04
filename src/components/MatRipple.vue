@@ -14,6 +14,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  rippleColor: {
+    type: String,
+    default: 'var(--md-color-on-surface)',
+  },
 });
 
 const id = `${Math.random()}`.substring(2);
@@ -35,7 +39,7 @@ const initialSize = ref(0);
 const animateEndTimer = ref(null);
 
 const getEleQuery = (selector) => new Promise((resolve) => {
-  const queryInfo = uni.createSelectorQuery().in(instance.proxy);
+  const queryInfo = instance.proxy.createSelectorQuery();
   queryInfo.select(selector).boundingClientRect();
   queryInfo.selectViewport().scrollOffset();
   queryInfo.exec((data) => {
@@ -70,6 +74,10 @@ const determineRippleSize = async () => {
   initialSize.value = size;
   rippleSize.value = `${size}px`;
   rippleScale.value = `${(maxRadius + softEdgeSize) / size}`;
+};
+const endPressAnimation = () => {
+  state.value = 'inactive';
+  pressed.value = false;
 };
 const startPressAnimation = async (ev = null) => {
   pressed.value = true;
@@ -115,42 +123,38 @@ const startPressAnimation = async (ev = null) => {
     },
   ], 450);
 };
-const endPressAnimation = () => {
-  state.value = 'inactive';
-  pressed.value = false;
-};
-let rippleStartEvent = null;
 const handlePressDown = async (ev) => {
   if (props.disabled) {
     return;
   }
 
-  rippleStartEvent = ev;
   state.value = 'hold-delay';
+  startPressAnimation(ev);
+  animateEndTimer.value = setTimeout(endPressAnimation, 450);
   await wait(150);
 
   if (state.value !== 'hold-delay') {
     return;
   }
   state.value = 'holding';
-  startPressAnimation(ev);
+  clearTimeout(animateEndTimer.value);
 };
 const handlePressUp = () => {
   if (props.disabled) {
     return;
   }
 
-  if (state.value === 'hold-delay') {
-    startPressAnimation(rippleStartEvent);
-    animateEndTimer.value = setTimeout(endPressAnimation, 450);
-    state.value = 'inactive';
+  // 长按
+  if (state.value === 'holding') {
+    state.value = 'waiting-for-click';
+    animateEndTimer.value = setTimeout(endPressAnimation, 105);
     return;
   }
-  if (state.value === 'holding') {
-    animateEndTimer.value = setTimeout(endPressAnimation, 105);
+  // 单击
+  if (state.value === 'hold-delay') {
+    state.value = 'waiting-for-click';
   }
 };
-
 onMounted(() => {
 });
 </script>
@@ -159,6 +163,9 @@ onMounted(() => {
   <div
     class="mat-ripple"
     :class="classMerge(`mat-ripple-id-${id}`, { pressed })"
+    :style="{
+      '--pressed-color': rippleColor,
+    }"
     @touchstart="handlePressDown"
     @touchend="handlePressUp"
   >
@@ -178,7 +185,7 @@ onMounted(() => {
   margin: auto;
   width: 100%;
   height: 100%;
-  --pressed-color: currentColor;
+  --pressed-color: var(--md-color-on-surface);
 
   .ripple-item {
     opacity: 0;
@@ -191,7 +198,7 @@ onMounted(() => {
 
   &.pressed {
     .ripple-item {
-      opacity: .12;
+      opacity: .1;
       transition-duration: 105ms;
     }
   }
