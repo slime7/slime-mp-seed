@@ -20,6 +20,7 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  /** 默认从媒体文件选择，也可以设置其他值，使微信从聊天记录选择非媒体文件 */
   fileSource: {
     type: String,
     default: 'media',
@@ -119,32 +120,46 @@ const selectImage = async () => {
 </script>
 
 <template>
-  <div @click="selectImage">
+  <div class="mp-upload-core" @click="selectImage">
     <div class="slot">
       <slot />
     </div>
 
-    <div class="slot-default">
-      <image
-        class="mp-upload-core"
-        src="@/assets/imgs/bg-upload.png"
-      />
+    <div class="slot-default flex center">
+      <div class="material-icons">
+        add
+      </div>
     </div>
   </div>
 </template>
 
-<style scoped lang="scss">
-.mp-upload-core {
+<style scoped lang="postcss">
+@reference '../assets/style/app.css';
+
+.mp-upload-core,
+:host {
+  position: relative;
   display: block;
-  width: 75px;
-  height: 75px;
+  width: 72px;
+  height: 72px;
 }
 
 .slot-default {
   display: none;
+  width: 100%;
+  height: 100%;
+  border-radius: --spacing(6);
+  background-color: var(--md-color-tertiary-container);
+
+  .material-icons {
+    --md-icons-opsz: 'opsz' 48;
+    --md-icons-weight: 'wght' 700;
+    font-size: 48px;
+    color: var(--md-color-on-tertiary);
+  }
 }
 
 .slot:empty + .slot-default {
-  display: block;
+  display: flex;
 }
 </style>

@@ -146,8 +146,8 @@ const showImageFullscreen = () => {
 
   .full-screen-btn {
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: 4px;
+    right: 4px;
     width: 32px;
     height: 32px;
     color: #e60012;

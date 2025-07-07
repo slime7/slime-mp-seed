@@ -38,6 +38,7 @@ const pageContainerVisible = ref(true);
 const preventPageBack = computed(() => store.preventNativeBack);
 
 const deviceInfo = computed(() => store.deviceInfo);
+const theme = computed(() => store.deviceInfo.theme);
 const titleBarScrolled = ref(false);
 const toastVisible = computed(() => toastStore.visible);
 const toastMsg = computed(() => toastStore.msg);
@@ -66,6 +67,10 @@ const afterBackBtn = () => {
 };
 
 onReady(() => {
+  uni.setNavigationBarColor({
+    frontColor: theme.value === 'dark' ? '#ffffff' : '#000000',
+    backgroundColor: theme.value === 'dark' ? '#000000' : '#ffffff',
+  });
 });
 </script>
 

@@ -1,6 +1,6 @@
 import useHttp from '@/hooks/useHttp';
 import { computed } from 'vue';
-import { apiUrl, ossSignUrl } from '@/utils/api-env-constance';
+import { apiUrl, ossSignUrl, uploadedUrl } from '@/utils/api-env-constance';
 import useGlobalStore from '@/store/global';
 import { apiError, wait } from './index';
 
@@ -101,7 +101,7 @@ export const uploadApi = (file, module = '', position = '') =>
   new Promise(async (resolve, reject) => {
     let ossResult;
     try {
-      const response = await request(`${ossSignUrl}`).post({
+      const response = await request(`${ossSignUrl}/anything`).post({
         fileName: file.name,
         module,
         fileSize: file.size,
@@ -117,7 +117,8 @@ export const uploadApi = (file, module = '', position = '') =>
       return;
     }
     uni.uploadFile({
-      url: `https://${ossResult.host}`,
+      // url: `https://${ossResult.host}`,
+      url: `${uploadedUrl}/delay/5`,
       filePath: file.path,
       name: 'file',
       formData: {
@@ -137,11 +138,14 @@ export const uploadApi = (file, module = '', position = '') =>
           // eslint-disable-next-line no-param-reassign
           data = JSON.parse(data);
         }
-        if (statusCode !== 200 || data.Status !== 'OK') {
+        if (statusCode !== 200) {
           reject(new Error('文件上传失败'));
           return;
         }
-        resolve(data);
+        // resolve(data);
+        resolve({
+          filename: 'image/jpeg', // 模拟一下返回值
+        });
       },
       fail() {
         reject(new Error('文件上传失败'));

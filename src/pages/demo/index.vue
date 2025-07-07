@@ -64,6 +64,17 @@
             局部滚动
           </mat-button>
         </div>
+
+        <div>
+          <mat-button
+            variant="tonal"
+            size="lg"
+            block
+            @click="jump('pages/demo/misc')"
+          >
+            其他功能
+          </mat-button>
+        </div>
       </div>
     </div>
   </mp-page>
