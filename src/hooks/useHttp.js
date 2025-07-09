@@ -131,20 +131,8 @@ export default (url, requestOptions = {}) => {
           response.value = httpResponse;
           responseHeaders.value = httpResponse.header;
           requestConfig.value = finalConfig;
-          if (statusCode < 200 || statusCode >= 300) {
-            // 模拟 error
-            const error = apiError(`请求出错 code： ${statusCode}`, {
-              response: httpResponse,
-            });
-            responseError.value = error;
-
-            console.debug('接口状态码不为2xx，抛出异常', error);
-            reject(error);
-
-            finallyFn();
-            return;
-          }
           responseDataTemp = httpResponse.data;
+
           if (typeof finalConfig?.transformResponse === 'function') {
             try {
               ({ data: responseDataTemp } = await finalConfig.transformResponse({
@@ -168,6 +156,19 @@ export default (url, requestOptions = {}) => {
               finallyFn(true);
             }
           } else {
+            if (statusCode < 200 || statusCode >= 300) {
+              // 模拟 error
+              const error = apiError(`请求出错 code： ${statusCode}`, {
+                response: httpResponse,
+              });
+              responseError.value = error;
+
+              console.debug('接口状态码不为2xx，抛出异常', error);
+              reject(error);
+
+              finallyFn();
+              return;
+            }
             responseData.value = responseDataTemp;
             finallyFn(true);
             resolve();

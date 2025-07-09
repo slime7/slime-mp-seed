@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { apiError, storage } from '@/utils';
 import weappJwtDecode from '@/utils/weapp-jwt';
 import { apiUrl } from '@/utils/api-env-constance';
+import useHttp from '@/hooks/useHttp';
 
 const useGlobalStore = defineStore('globalStore', {
   state: () => ({
@@ -106,11 +107,11 @@ const useGlobalStore = defineStore('globalStore', {
         return;
       }
       try {
-        const userInfo = weappJwtDecode(token);
+        // const userInfo = weappJwtDecode(token);
         this.setToken(token);
         storage.set('token', token);
-        this.setUserInfo(userInfo);
-        console.log('userInfo', userInfo);
+        // this.setUserInfo(userInfo);
+        // console.log('userInfo', userInfo);
       } catch (err) {
         console.log(err);
       }
@@ -122,46 +123,29 @@ const useGlobalStore = defineStore('globalStore', {
       const { saveToken } = this;
       this.isRefreshingToken = true;
       const self = this;
-      return new Promise((resolve, reject) => {
-        uni.login({
-          success(codeResult) {
-            const { code } = codeResult;
-            uni.request({
-              url: `${apiUrl}/anything`,
-              data: {
-                code,
-                token: 'token', // mock
-              },
-              header: {
-                'content-type': 'application/x-www-form-urlencoded',
-              },
-              method: 'POST',
-              success(response) {
-                if (+response.statusCode !== 200) {
-                  self.isRefreshingToken = false;
-                  reject(apiError('服务器出错了', response));
-                  return;
-                }
-                if (response.data.code !== 200) {
-                  self.isRefreshingToken = false;
-                  reject(apiError(response.data.msg ?? '接口出错', response));
-                  return;
-                }
-                saveToken(response.data.data);
-                self.isRefreshingToken = false;
-                resolve(response.data.data);
-              },
-              fail(err) {
-                self.isRefreshingToken = false;
-                reject(apiError(err.errMsg, err));
-              },
-            });
-          },
-          fail(err) {
+      // eslint-disable-next-line no-async-promise-executor
+      return new Promise(async (resolve, reject) => {
+        const code = 'wechat-login-code-mock';
+        try {
+          const { data, statusCode, response } = await useHttp(`${apiUrl}/anything`).post({
+            code,
+            token: 'token', // mock
+          });
+          console.log('response', data.value);
+          if (+statusCode.value !== 200) {
             self.isRefreshingToken = false;
-            reject(apiError(err.errMsg, err));
-          },
-        });
+            reject(apiError('服务器出错了', response.value));
+            return;
+          }
+          console.log('getTokenResult', data.value.data);
+          const mockData = JSON.parse(data.value.data);
+          saveToken(mockData.token);
+          self.isRefreshingToken = false;
+          resolve(mockData.token);
+        } catch (err) {
+          self.isRefreshingToken = false;
+          reject(apiError(err.errMsg, err));
+        }
       });
     },
   },

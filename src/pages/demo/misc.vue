@@ -67,6 +67,23 @@
         </div>
 
         <div class="text-base font-bold mt-4">
+          http 自动获取 token
+        </div>
+
+        <div class="mt-2 flex flex-wrap gap-2">
+          <mat-button
+            @click="tokenRequest"
+          >
+            发送请求
+          </mat-button>
+          <mat-button
+            @click="removeToken"
+          >
+            删除 token
+          </mat-button>
+        </div>
+
+        <div class="text-base font-bold mt-4">
           图片上传组件及状态展示覆盖层组件
         </div>
 
@@ -103,6 +120,10 @@ import MpUploadCore from '@/components/MpUploadCore.vue';
 import MpPreviewCover from '@/components/MpPreviewCover.vue';
 import useHttp from '@/hooks/useHttp';
 import { parseImageUrl } from '@/utils';
+import { commonApi } from '@/utils/api';
+import useGlobalStore from '@/store/global';
+
+const store = useGlobalStore();
 
 const preObject = {
   foo: 'bar',
@@ -120,6 +141,11 @@ const requestResult = computed(() => reactive({
   data: requestData,
   error: requestError,
 }));
+
+const { execute: tokenRequest } = commonApi.needToken();
+const removeToken = () => {
+  store.saveToken(null);
+};
 
 // 上传
 const images = ref({});

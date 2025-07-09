@@ -17,11 +17,8 @@ const wrapResponseFn = async ({
   responseReject,
   execute,
 }, transformResponse) => {
-  if (data && (data.code < 200 || data.code >= 300)) {
-    const error = apiError(`接口出错： ${data.msg}`, {
-      response,
-    });
-    if (data.code === 402) {
+  if (response.statusCode < 200 || response.statusCode >= 300) {
+    if (response.statusCode === 401) {
       // 刷新 token
       console.debug('开始刷新 token');
       try {
@@ -30,21 +27,24 @@ const wrapResponseFn = async ({
         execute()
           .then(responseResolve)
           .catch(responseReject);
-        return { data: data.data };
+        return { data };
       } catch (err) {
         console.debug('获取 token 出错');
 
         execute()
           .then(responseResolve)
           .catch(responseReject);
-        return { data: data.data };
+        return { data };
       }
-    }
+    } else {
+      const error = apiError(`请求出错 code： ${response.statusCode}`, {
+        response,
+      });
 
-    console.debug('接口响应 code 不为2xx，抛出异常', error);
-    responseReject(error);
-    // eslint-disable-next-line consistent-return
-    return Promise.reject(error);
+      responseReject(error);
+      // eslint-disable-next-line consistent-return
+      return Promise.reject(error);
+    }
   }
   console.debug('接口响应 code 为200');
   let result = { data: data.data };
@@ -73,6 +73,7 @@ const request = (url, config = {}) => useHttp(url, {
     if (branch) {
       combinedHeaders.branch = branch;
     }
+    console.log('token', token.value);
     if (token.value) {
       combinedHeaders.Authorization = `Bearer ${token.value}`;
     }
@@ -94,6 +95,7 @@ const request = (url, config = {}) => useHttp(url, {
 }).branch(branch);
 
 export const commonApi = {
+  needToken: () => request(`${apiUrl}/bearer`).get(),
 };
 
 export const uploadApi = (file, module = '', position = '') =>
