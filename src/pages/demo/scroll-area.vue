@@ -19,7 +19,7 @@
           :disabled-pull-down-refresh="listPullDownStatus"
           @pull-down="onPullDown"
         >
-          <div class="p-4">
+          <div class="p-4 flex-auto">
             <div>
               <mp-checkbox
                 v-model="fillContent"

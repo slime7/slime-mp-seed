@@ -113,7 +113,7 @@ const onScrolltolower = (ev) => {
       </div>
     </div>
     <div
-      class="scroll-frame min-h-full"
+      class="scroll-frame min-h-full flex flex-col"
     >
       <slot />
 
